@@ -454,10 +454,11 @@
                             </div>
 
                             <!-- Header Metadata Details (Clickable Redacted fields) -->
-                            <div class="flex-1 w-full space-y-3 font-mono text-xs sm:text-sm">
+                           <div class="flex-1 w-full space-y-3 font-mono text-xs sm:text-sm">
                                 <div class="border-b border-scpborder pb-2 flex items-center justify-between">
                                     <span class="text-zinc-500 uppercase">Codename:</span>
-                                    <span class="text-red-300 font-bold">Consultant-07</span>
+                                    <span id="field-codename" onclick="toggleField('codename')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
+                                        <span>[REDACTED]</span>
                                         <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
                                     </span>
                                 </div>
@@ -467,13 +468,15 @@
                                 </div>
                                 <div class="border-b border-scpborder pb-2 flex items-center justify-between">
                                     <span class="text-zinc-500 uppercase">Age:</span>
-                                    <span class="text-red-300 font-bold">40</span>
+                                    <span id="field-age" onclick="toggleField('age')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
+                                        <span>[REDACTED]</span>
                                         <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
                                     </span>
                                 </div>
                                 <div class="border-b border-scpborder pb-2 flex items-center justify-between">
                                     <span class="text-zinc-500 uppercase">Height:</span>
-                                    <span class="text-red-300 font-bold">188cm</span>
+                                    <span id="field-height" onclick="toggleField('height')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
+                                        <span>[REDACTED]</span>
                                         <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
                                     </span>
                                 </div>

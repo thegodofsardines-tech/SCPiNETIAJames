@@ -1,503 +1,656 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCP Foundation iNet Database - Secure Terminal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        scpdark: '#050508',
-                        scppanel: '#111116',
-                        scpborder: '#2a0d10',
-                        scpred: '#8b0000',
-                        scpbrightred: '#ff1a1a',
-                        scpdarkred: '#4a0000',
-                        scptext: '#c8c8c8',
-                    },
-                    fontFamily: {
-                        mono: ['Courier New', Courier, monospace],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome for secure icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>SCP Foundation - iNet Secure Database</title>
     <style>
-        /* CRT Scanline & Terminal Aesthetics */
-        body {
-            background-color: #050508;
-            color: #c8c8c8;
-            font-family: 'Courier New', Courier, monospace;
-            overflow-x: hidden;
+        :root {
+            --bg-color: #050505;
+            --panel-bg: #0a0a0a;
+            --border-color: #3d0505;
+            --border-hover: #b30000;
+            --text-main: #c0c0c0;
+            --text-bright: #ffffff;
+            --accent-red: #cc0000;
+            --accent-dark-red: #800000;
+            --glow-red: rgba(204, 0, 0, 0.4);
+            --scanline-color: rgba(0, 0, 0, 0.25);
         }
-        
-        .scanlines {
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.3) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.03),
-                rgba(0, 255, 0, 0.01),
-                rgba(0, 0, 255, 0.03)
-            );
-            background-size: 100% 4px, 6px 100%;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* CRT Scanline & Vignette Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 999;
+            background-size: 100% 3px, 6px 100%;
             pointer-events: none;
         }
 
-        .crt-glow {
-            text-shadow: 0 0 8px rgba(139, 0, 0, 0.7);
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+            z-index: 1000;
+            pointer-events: none;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4a0000;
-            border: 1px solid #8b0000;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff1a1a;
+        /* Screen Container */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            padding: 30px;
+            overflow-y: auto;
+            background: radial-gradient(circle at center, #110202 0%, #050505 100%);
         }
 
-        .red-glow-border {
-            box-shadow: 0 0 20px rgba(139, 0, 0, 0.25);
+        .screen.active {
+            display: flex;
         }
 
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        /* 1. INTRO ANIMATION SCREEN */
+        #intro-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #000;
+            z-index: 2000;
         }
-        .animate-pulse-slow {
-            animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+        .auth-box {
+            border: 2px solid var(--accent-dark-red);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            background: rgba(10, 0, 0, 0.8);
+            box-shadow: 0 0 25px var(--glow-red);
+        }
+
+        .auth-title {
+            color: var(--accent-red);
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--accent-red);
+        }
+
+        .terminal-text {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: left;
+            margin-bottom: 25px;
+            min-height: 100px;
+        }
+
+        .auth-btn {
+            background-color: var(--accent-dark-red);
+            color: var(--text-bright);
+            border: 1px solid var(--accent-red);
+            padding: 12px 30px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(128, 0, 0, 0.5);
+        }
+
+        .auth-btn:hover {
+            background-color: var(--accent-red);
+            box-shadow: 0 0 20px var(--accent-red);
+        }
+
+        /* HEADER & FOOTER LAYOUT */
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: var(--accent-red);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--glow-red);
+        }
+
+        .header-left p {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--accent-dark-red);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            background: rgba(20, 0, 0, 0.2);
+        }
+
+        /* NAVIGATION / BREADCRUMBS */
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .breadcrumb span {
+            color: var(--accent-red);
+        }
+
+        /* DATABASE SELECTION CARDS / LISTS */
+        .database-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .db-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .db-card.active-link {
+            cursor: pointer;
+            border-color: var(--accent-dark-red);
+        }
+
+        .db-card.active-link:hover {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 15px var(--glow-red);
+            transform: translateY(-2px);
+        }
+
+        .db-card.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        .db-card h3 {
+            color: var(--text-bright);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .db-card p {
+            font-size: 0.85rem;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .status-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            border: 1px solid;
+            letter-spacing: 1px;
+        }
+
+        .status-tag.authorized {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            background: rgba(128, 0, 0, 0.1);
+        }
+
+        .status-tag.unauthorized {
+            border-color: #444;
+            color: #555;
+        }
+
+        /* JONATHAN JAMES FILE STYLES */
+        .file-container {
+            max-width: 950px;
+            margin: 0 auto;
+            width: 100%;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 35px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .file-header-flex {
+            display: flex;
+            gap: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+            align-items: flex-start;
+        }
+
+        .photo-box {
+            width: 160px;
+            height: 200px;
+            background: #111;
+            border: 1px solid var(--accent-dark-red);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .photo-box:hover {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        .photo-box .redacted-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0202;
+            color: var(--accent-red);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            font-weight: bold;
+            padding: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .photo-box.revealed .redacted-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .photo-content {
+            font-size: 0.7rem;
+            color: #aaa;
+            padding: 5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex-grow: 1;
+            font-size: 0.9rem;
+        }
+
+        .info-item {
+            background: rgba(15, 2, 2, 0.4);
+            padding: 8px 12px;
+            border-left: 2px solid var(--accent-dark-red);
+        }
+
+        .info-label {
+            color: #777;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            color: var(--text-bright);
+            font-weight: bold;
+        }
+
+        /* Interactive Redacted Fields */
+        .redacted-click {
+            background-color: #222;
+            color: #222;
+            padding: 1px 6px;
+            cursor: pointer;
+            border-radius: 2px;
+            user-select: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .redacted-click:hover {
+            background-color: #400;
+            color: #f55;
+        }
+
+        .redacted-click.revealed {
+            background-color: transparent;
+            color: #fff;
+            border: 1px dashed var(--accent-dark-red);
+        }
+
+        /* Security Badge - positioned cleanly on top right of file container */
+        .security-badge {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            background: rgba(10, 0, 0, 0.8);
+        }
+
+        /* SECTIONS */
+        .dossier-section {
+            margin-bottom: 30px;
+        }
+
+        .dossier-section h3 {
+            color: var(--accent-red);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .doc-area {
+            background: rgba(8, 2, 2, 0.6);
+            border: 1px solid #1f0505;
+            padding: 15px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* Clickable Report Section */
+        .clickable-section-box {
+            border: 1px dashed var(--accent-dark-red);
+            background: rgba(20, 2, 2, 0.4);
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .clickable-section-box:hover {
+            border-color: var(--accent-red);
+            background: rgba(60, 5, 5, 0.3);
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        .clickable-section-box h3 {
+            color: var(--text-bright);
+            margin: 0;
+            border: none;
+            padding: 0;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .clickable-section-box span {
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        /* Back Button */
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--accent-dark-red);
+            color: var(--text-main);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-red);
+            color: var(--text-bright);
+            background: rgba(100, 0, 0, 0.2);
         }
     </style>
 </head>
-<body class="min-h-screen text-scptext relative flex flex-col select-none">
+<body>
 
-    <div class="scanlines fixed inset-0 z-50 pointer-events-none"></div>
+    <!-- 1. AUTHORIZATION INTRO ANIMATION SCREEN -->
+    <div id="intro-screen" class="screen active">
+        <div class="auth-box">
+            <div class="auth-title">SCP iNet DATABASE</div>
+            <div id="terminal-output" class="terminal-text"></div>
+            <button id="auth-submit-btn" class="auth-btn" style="display: none;" onclick="enterDatabase()">Initialize Clearance</button>
+        </div>
+    </div>
 
-    <!-- ========================================== -->
-    <!-- SCREEN 1: AUTHORIZATION INTRO ANIMATION    -->
-    <!-- ========================================== -->
-    <div id="auth-screen" class="fixed inset-0 z-40 bg-black flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-2xl bg-scppanel border-2 border-scpred rounded-lg p-6 shadow-2xl red-glow-border relative">
-            
-            <!-- Header Warning Bar -->
-            <div class="flex items-center justify-between border-b border-scpred pb-3 mb-4 text-xs tracking-widest text-scpbrightred font-bold">
-                <span><i class="fa-solid fa-triangle-exclamation mr-2"></i>SECURE TERMINAL // CLEARANCE REQ</span>
-                <span class="animate-pulse">ONLINE [SECURE NODE 07]</span>
+    <!-- 2. PAGE 1: SCP DATABASE (Main Categories) -->
+    <div id="page-1" class="screen">
+        <header>
+            <div class="header-left">
+                <h1>SCP FOUNDATION iNet DATABASE</h1>
+                <p>Secure Facility Terminal // Global Secure Network</p>
             </div>
-
-            <!-- Terminal Output Box -->
-            <div id="terminal-output" class="bg-black border border-scpborder p-4 h-48 rounded mb-4 overflow-y-auto text-xs sm:text-sm text-red-500 font-mono space-y-1">
-                <div>[SYSTEM] Initializing SCP Foundation iNet Gateway v5.1.0...</div>
-                <div>[SYSTEM] Connecting to Site-45 Secure Relay... ESTABLISHED.</div>
-                <div>[SECURE] Encrypted handshake verified. Awaiting credentials...</div>
+            <div class="header-right">
+                CLEARANCE: LEVEL 4<br>
+                USER: ADMIN-04
             </div>
+        </header>
 
-            <!-- Login Form / Inputs -->
-            <div id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-scptext mb-1">Personnel ID / Agent Token</label>
-                    <input type="text" id="agent-id" value="AG-8821-JJ" class="w-full bg-black border border-scpred rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-scpbrightred font-mono" placeholder="Enter ID...">
-                </div>
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-scptext mb-1">Security Clearance Passcode</label>
-                    <input type="password" id="agent-pass" value="••••••••••••" class="w-full bg-black border border-scpred rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-scpbrightred font-mono" placeholder="Enter Passcode...">
-                </div>
-                <button onclick="startAuthSequence()" id="auth-btn" class="w-full bg-scpred hover:bg-red-700 text-white font-bold py-3 px-4 rounded tracking-widest uppercase text-sm border border-scpbrightred transition-all duration-200 shadow-lg flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-lock-open"></i>
-                    <span>Authenticate & Access iNet</span>
-                </button>
+        <div class="breadcrumb">
+            HOME / <span>DATABASE</span>
+        </div>
+
+        <div class="database-grid">
+            <div class="db-card active-link" onclick="navigateTo('page-2')">
+                <span class="status-tag authorized">AUTHORIZED</span>
+                <h3>Departments</h3>
+                <p>Access operational oversight, internal divisions, intelligence agencies, and tactical oversight logs.</p>
             </div>
-
-            <!-- Progress Bar Container (Hidden initially) -->
-            <div id="auth-progress-container" class="hidden space-y-3 py-6">
-                <div class="text-xs uppercase tracking-widest text-red-400 text-center animate-pulse" id="auth-status-text">
-                    Verifying Biometrics & Level 2 Clearance...
-                </div>
-                <div class="w-full bg-black border border-scpred h-4 rounded overflow-hidden p-0.5">
-                    <div id="auth-progress-bar" class="bg-scpbrightred h-full w-0 transition-all duration-75"></div>
-                </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">LOCKED</span>
+                <h3>Site Directorates</h3>
+                <p>Restricted facility management records and regional containment zone directives.</p>
             </div>
-
-            <div class="mt-4 text-center text-[10px] text-zinc-500">
-                WARNING: Unauthorized access to SCP Foundation networks is punishable by immediate amnesticization or termination.
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">LOCKED</span>
+                <h3>Anomaly Archive</h3>
+                <p>Catalogued specimens, historical containment logs, and active anomaly containment protocols.</p>
+            </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">LOCKED</span>
+                <h3>Global Occult Coalition</h3>
+                <p>External threat monitoring, diplomatic communications, and joint operation reports.</p>
             </div>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MAIN APP CONTAINER (PAGES 1 - 4 & SUBPAGE) -->
-    <!-- ========================================== -->
-    <div id="main-app" class="hidden flex-1 flex flex-col min-h-screen">
-
-        <header class="bg-scppanel border-b border-scpred px-4 py-3 flex items-center justify-between shrink-0 shadow-md">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded bg-scpred flex items-center justify-center text-white font-bold text-lg border border-scpbrightred">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm sm:text-base font-bold tracking-widest text-white flex items-center">
-                        SCP FOUNDATION <span class="text-xs ml-2 px-1.5 py-0.5 bg-red-950 text-red-400 border border-scpred rounded">iNet v5.1</span>
-                    </h1>
-                    <p class="text-[10px] text-zinc-400">SECURE DATABASE ACCESS // GLOBAL NETWORK</p>
-                </div>
+    <!-- 3. PAGE 2: DEPARTMENT FILES -->
+    <div id="page-2" class="screen">
+        <header>
+            <div class="header-left">
+                <h1>DEPARTMENT DIRECTORY</h1>
+                <p>Select Operational Division</p>
             </div>
-            <div class="flex items-center space-x-4 text-xs">
-                <div class="hidden sm:block text-right">
-                    <div class="text-red-400 font-bold">STATUS: AUTHORIZED</div>
-                    <div class="text-zinc-400">CLEARANCE: LEVEL 4</div>
-                </div>
-                <button onclick="lockTerminal()" title="Lock Terminal" class="bg-black hover:bg-scpred border border-scpred text-zinc-300 hover:text-white px-3 py-1.5 rounded transition text-xs flex items-center space-x-1">
-                    <i class="fa-solid fa-lock"></i>
-                    <span class="hidden md:inline">Lock</span>
-                </button>
+            <div class="header-right">
+                CLEARANCE: LEVEL 4<br>
+                USER: ADMIN-04
             </div>
         </header>
 
-        <!-- Main Content Area with Sidebar -->
-        <div class="flex-1 flex flex-col md:flex-row">
-            
-            <aside class="w-full md:w-64 bg-scppanel border-r border-scpborder p-4 shrink-0 flex flex-col justify-between">
-                <div class="space-y-1">
-                    <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2 mb-2">Navigation Directory</div>
-                    
-                    <!-- Menu Item 1: Database Index (CLICKABLE -> Page 1) -->
-                    <button onclick="navigateToPage('database')" id="nav-database-btn" class="w-full text-left px-3 py-2.5 rounded text-xs font-bold bg-red-950/40 text-red-300 border border-scpred hover:bg-red-900/40 flex items-center justify-between transition shadow-inner">
-                        <span class="flex items-center space-x-2">
-                            <i class="fa-solid fa-database w-4 text-center text-scpbrightred"></i>
-                            <span>Database Index</span>
-                        </span>
-                        <i class="fa-solid fa-chevron-right text-[10px] text-scpbrightred animate-pulse"></i>
-                    </button>
+        <div class="breadcrumb">
+            HOME / DATABASE / <span>DEPARTMENTS</span>
+        </div>
 
-                    <!-- Menu Item 2: Secure Archive (Locked) -->
-                    <button onclick="showRestrictedModal('Secure Archive')" class="w-full text-left px-3 py-2.5 rounded text-xs text-zinc-500 hover:bg-black/40 hover:text-zinc-400 flex items-center justify-between transition group">
-                        <span class="flex items-center space-x-2">
-                            <i class="fa-solid fa-box-archive w-4 text-center"></i>
-                            <span>Secure Archive</span>
-                        </span>
-                        <i class="fa-solid fa-lock text-[10px] text-zinc-600"></i>
-                    </button>
+        <button class="back-btn" onclick="navigateTo('page-1')">&lt; RETURN TO MAIN DATABASE</button>
 
-                    <!-- Menu Item 3: Personnel Registry (Locked) -->
-                    <button onclick="showRestrictedModal('Global Personnel Registry')" class="w-full text-left px-3 py-2.5 rounded text-xs text-zinc-500 hover:bg-black/40 hover:text-zinc-400 flex items-center justify-between transition group">
-                        <span class="flex items-center space-x-2">
-                            <i class="fa-solid fa-users w-4 text-center"></i>
-                            <span>Personnel Registry</span>
-                        </span>
-                        <i class="fa-solid fa-lock text-[10px] text-zinc-600"></i>
-                    </button>
+        <div class="database-grid">
+            <div class="db-card active-link" onclick="navigateTo('page-3')">
+                <span class="status-tag authorized">AUTHORIZED</span>
+                <h3>Intelligence Agency</h3>
+                <p>Covert operations, deep-cover assets, internal counter-espionage, and strategic consulting files.</p>
+            </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">LOCKED</span>
+                <h3>Ethics Committee</h3>
+                <p>Oversight protocols, moral review board petitions, and D-Class resource management review.</p>
+            </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">LOCKED</span>
+                <h3>Scientific Department</h3>
+                <p>Research divisions, anomalous property experimentation, and containment engineering.</p>
+            </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">LOCKED</span>
+                <h3>Security & Containment</h3>
+                <p>Mobile Task Force deployment rosters, site defense grids, and tactical response logs.</p>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Menu Item 4: Site Directory (Locked) -->
-                    <button onclick="showRestrictedModal('Site Directory')" class="w-full text-left px-3 py-2.5 rounded text-xs text-zinc-500 hover:bg-black/40 hover:text-zinc-400 flex items-center justify-between transition group">
-                        <span class="flex items-center space-x-2">
-                            <i class="fa-solid fa-building-shield w-4 text-center"></i>
-                            <span>Site Directory</span>
-                        </span>
-                        <i class="fa-solid fa-lock text-[10px] text-zinc-600"></i>
-                    </button>
+    <!-- 4. PAGE 3: PERSONNEL FILES -->
+    <div id="page-3" class="screen">
+        <header>
+            <div class="header-left">
+                <h1>INTELLIGENCE AGENCY PERSONNEL</h1>
+                <p>Active Dossier Directory</p>
+            </div>
+            <div class="header-right">
+                CLEARANCE: LEVEL 4<br>
+                USER: ADMIN-04
+            </div>
+        </header>
 
-                    <!-- Menu Item 5: Departments (CLICKABLE -> Page 2) -->
-                    <button onclick="navigateToPage('departments')" id="nav-departments-btn" class="w-full text-left px-3 py-2.5 rounded text-xs text-zinc-300 hover:bg-red-950/20 hover:text-white flex items-center justify-between transition group">
-                        <span class="flex items-center space-x-2">
-                            <i class="fa-solid fa-sitemap w-4 text-center text-zinc-500 group-hover:text-scpbrightred"></i>
-                            <span>Departments</span>
-                        </span>
-                        <i class="fa-solid fa-arrow-right text-[10px] text-zinc-600 group-hover:text-scpbrightred"></i>
-                    </button>
+        <div class="breadcrumb">
+            HOME / DATABASE / DEPARTMENTS / <span>INTELLIGENCE AGENCY</span>
+        </div>
+
+        <button class="back-btn" onclick="navigateTo('page-2')">&lt; RETURN TO DEPARTMENTS</button>
+
+        <div class="database-grid">
+            <div class="db-card active-link" onclick="navigateTo('page-4')">
+                <span class="status-tag authorized">DOSSIER OPEN</span>
+                <h3>Jonathan James / Consultant-07</h3>
+                <p>Senior Strategic Consultant & Infiltration Specialist. Level 4 Clearance assigned to Special Intelligence.</p>
+            </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">RESTRICTED</span>
+                <h3>Agent V. Vance / Operative-12</h3>
+                <p>Field operative stationed in Eastern European sector. Dossier sealed pending tribunal review.</p>
+            </div>
+            <div class="db-card locked">
+                <span class="status-tag unauthorized">RESTRICTED</span>
+                <h3>Director K. Sterling</h3>
+                <p>Head of Intelligence Division Operations. Access restricted to O5 Council and Ethics Committee members.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. PAGE 4: JONATHAN JAMES FILE -->
+    <div id="page-4" class="screen">
+        <header>
+            <div class="header-left">
+                <h1>PERSONNEL DOSSIER: JONATHAN JAMES</h1>
+                <p>Secure Foundation Personnel Record</p>
+            </div>
+            <div class="header-right">
+                CLEARANCE: LEVEL 4<br>
+                USER: ADMIN-04
+            </div>
+        </header>
+
+        <div class="breadcrumb">
+            HOME / DATABASE / DEPARTMENTS / INTELLIGENCE AGENCY / <span>JONATHAN JAMES</span>
+        </div>
+
+        <button class="back-btn" onclick="navigateTo('page-3')">&lt; RETURN TO PERSONNEL LIST</button>
+
+        <div class="file-container">
+            <div class="security-badge">CLASSIFIED // LEVEL 4</div>
+
+            <!-- Top Header Info with Photo and Clickable Unredactions -->
+            <div class="file-header-flex">
+                <div class="photo-box" id="photo-box" onclick="revealPhoto()">
+                    <div class="redacted-overlay">[ REDACTED ]<br><span style="font-size:0.6rem; margin-top:4px;">CLICK TO DECRYPT</span></div>
+                    <div class="photo-content">
+                        <strong>DOSSIER IMAGE</strong><br>
+                        ID: 440-JJ<br>
+                        [CONFIRMED]
+                    </div>
                 </div>
 
-                <!-- Footer Sidebar Widget -->
-                <div class="mt-6 pt-4 border-t border-scpborder text-[10px] text-zinc-500 space-y-1">
-                    <div class="flex justify-between">
-                        <span>NODE SEC_HASH:</span>
-                        <span class="text-red-400 font-mono">0x8F9B2</span>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Codename</span>
+                        <span class="info-value">
+                            <span class="redacted-click" id="val-codename" onclick="revealField('codename')">[REDACTED: SPECTRE]</span>
+                        </span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>ENCRYPTION:</span>
-                        <span class="text-zinc-400">AES-256-GCM</span>
+                    <div class="info-item">
+                        <span class="info-label">Name</span>
+                        <span class="info-value">Jonathan James</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Age</span>
+                        <span class="info-value">
+                            <span class="redacted-click" id="val-age" onclick="revealField('age')">[REDACTED: 41]</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Height</span>
+                        <span class="info-value">
+                            <span class="redacted-click" id="val-height" onclick="revealField('height')">[REDACTED: 6'2"]</span>
+                        </span>
+                    </div>
+                    <div class="info-item" style="grid-column: span 2;">
+                        <span class="info-label">Department</span>
+                        <span class="info-value">Intelligence Agency / Strategic Operations</span>
                     </div>
                 </div>
-            </aside>
+            </div>
 
-            <!-- Main Content Container -->
-            <main class="flex-1 bg-scpdark p-4 sm:p-8 overflow-y-auto">
-                
-                <!-- ========================================== -->
-                <!-- PAGE 1: MAIN SCP DATABASE (MULTIPLE SELECTIONS) -->
-                <!-- ========================================== -->
-                <section id="page-database" class="max-w-4xl mx-auto space-y-6">
-                    <div class="border-b border-scpred pb-4">
-                        <div class="text-xs text-scpbrightred font-bold tracking-widest uppercase mb-1">
-                            <i class="fa-solid fa-terminal mr-2"></i>Database Index // Main Directory
-                        </div>
-                        <h2 class="text-xl sm:text-2xl font-bold tracking-wider text-white">SELECT DATABASE SECTION</h2>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Selection 1: Departments (CLICKABLE -> Page 2) -->
-                        <div onclick="navigateToPage('departments')" class="bg-scppanel border-2 border-scpred p-5 rounded-lg cursor-pointer hover:bg-red-950/20 transition relative red-glow-border group">
-                            <div class="absolute top-3 right-3 text-scpbrightred group-hover:scale-110 transition"><i class="fa-solid fa-arrow-right"></i></div>
-                            <div class="text-scpbrightred text-xs font-bold mb-1">INDEX: SEC-01 (ONLINE)</div>
-                            <h3 class="text-base font-bold text-white mb-2 group-hover:text-red-400 transition">Departments</h3>
-                            <p class="text-xs text-zinc-400">Access departmental files, divisions, internal affairs, and intelligence units.</p>
-                        </div>
-
-                        <!-- Selection 2: Site Directory (Locked) -->
-                        <div onclick="showRestrictedModal('Site Directory')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">INDEX: SEC-02</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Site Directory</h3>
-                            <p class="text-xs text-zinc-500">Global installations, containment sites, and secure biolabs.</p>
-                        </div>
-
-                        <!-- Selection 3: Global Occult Coalition (Locked) -->
-                        <div onclick="showRestrictedModal('Global Occult Coalition (GOC)')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">INDEX: SEC-03</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Global Occult Coalition</h3>
-                            <p class="text-xs text-zinc-500">UN allied threat entities and intelligence sharing agreements.</p>
-                        </div>
-
-                        <!-- Selection 4: Ethics Committee (Locked) -->
-                        <div onclick="showRestrictedModal('Ethics Committee Database')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">INDEX: SEC-04</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Ethics Committee</h3>
-                            <p class="text-xs text-zinc-500">Oversight rulings, committee directives, and humanitarian mandates.</p>
-                        </div>
-
-                        <!-- Selection 5: O5 Council (Locked) -->
-                        <div onclick="showRestrictedModal('O5 Council Secure Files')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative sm:col-span-2">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">INDEX: SEC-05 (LEVEL 5 ONLY)</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">O5 Council</h3>
-                            <p class="text-xs text-zinc-500">Highest administrative authority records and direct council mandates.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ========================================== -->
-                <!-- PAGE 2: DEPARTMENT FILES                   -->
-                <!-- ========================================== -->
-                <section id="page-departments" class="max-w-4xl mx-auto space-y-6 hidden">
-                    <div class="flex items-center justify-between border-b border-scpred pb-4">
-                        <div>
-                            <div class="text-xs text-scpbrightred font-bold tracking-widest uppercase mb-1">
-                                <i class="fa-solid fa-folder-open mr-2"></i>Directory // Foundation Departments
-                            </div>
-                            <h2 class="text-xl sm:text-2xl font-bold tracking-wider text-white">SELECT DEPARTMENT FILE</h2>
-                        </div>
-                        <button onclick="navigateToPage('database')" class="text-xs bg-black border border-scpborder hover:border-scpred px-3 py-1.5 rounded text-zinc-300 hover:text-white transition flex items-center space-x-1">
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <span>Back to Database</span>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Dept 1: Security & Containment (Locked) -->
-                        <div onclick="showRestrictedModal('Security & Containment Division')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">DEPT ID: SEC-01</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Security & Containment</h3>
-                            <p class="text-xs text-zinc-500">Oversees physical security, containment procedures, and mobile task force deployment.</p>
-                        </div>
-
-                        <!-- Dept 2: Scientific (Locked) -->
-                        <div onclick="showRestrictedModal('Scientific Division')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">DEPT ID: SCI-02</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Scientific Division</h3>
-                            <p class="text-xs text-zinc-500">Research and experimentation on anomalous objects, entities, and phenomena.</p>
-                        </div>
-
-                        <!-- Dept 3: Intelligence Agency (CLICKABLE -> Page 3) -->
-                        <div onclick="navigateToPage('personnel')" class="bg-scppanel border-2 border-scpred p-5 rounded-lg cursor-pointer hover:bg-red-950/20 transition relative red-glow-border group">
-                            <div class="absolute top-3 right-3 text-scpbrightred group-hover:scale-110 transition"><i class="fa-solid fa-arrow-right"></i></div>
-                            <div class="text-scpbrightred text-xs font-bold mb-1">DEPT ID: INT-03 (ACTIVE)</div>
-                            <h3 class="text-base font-bold text-white mb-2 group-hover:text-red-400 transition">Intelligence Agency</h3>
-                            <p class="text-xs text-zinc-400">Covert operations, espionage, information control, and external threat neutralization.</p>
-                        </div>
-
-                        <!-- Dept 4: Medical (Locked) -->
-                        <div onclick="showRestrictedModal('Medical Division')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">DEPT ID: MED-04</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Medical Division</h3>
-                            <p class="text-xs text-zinc-500">Biological trauma response, psychological evaluation, and amnestic production.</p>
-                        </div>
-
-                        <!-- Dept 5: Logistics (Locked) -->
-                        <div onclick="showRestrictedModal('Logistics Division')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative sm:col-span-2">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">DEPT ID: LOG-05</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-2">Logistics & Supply</h3>
-                            <p class="text-xs text-zinc-500">Global transport, supply chains, facility construction, and equipment distribution.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ========================================== -->
-                <!-- PAGE 3: PERSONNEL FILES                    -->
-                <!-- ========================================== -->
-                <section id="page-personnel" class="max-w-4xl mx-auto space-y-6 hidden">
-                    <div class="flex items-center justify-between border-b border-scpred pb-4">
-                        <div>
-                            <div class="text-xs text-scpbrightred font-bold tracking-widest uppercase mb-1">
-                                <i class="fa-solid fa-user-secret mr-2"></i>Intelligence Agency // Specialiazed Personnel Directory
-                            </div>
-                            <h2 class="text-xl sm:text-2xl font-bold tracking-wider text-white">SELECT PERSONNEL FILE</h2>
-                        </div>
-                        <button onclick="navigateToPage('departments')" class="text-xs bg-black border border-scpborder hover:border-scpred px-3 py-1.5 rounded text-zinc-300 hover:text-white transition flex items-center space-x-1">
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <span>Back to Departments</span>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Personnel 1: Dr. ██████ (Locked) -->
-                        <div onclick="showRestrictedModal('Dr. ██████ / Senior Director')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">CLEARANCE: LEVEL 4</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-1">Dr. ██████</h3>
-                            <p class="text-xs text-zinc-500">Regional Director of Intelligence Operations</p>
-                        </div>
-
-                        <!-- Personnel 2: Agent ████ (Locked) -->
-                        <div onclick="showRestrictedModal('Agent ████ / Field Operative')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">CLEARANCE: LEVEL 3</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-1">Agent ████</h3>
-                            <p class="text-xs text-zinc-500">Lead Field Operative, European Division</p>
-                        </div>
-
-                        <!-- Personnel 3: Jonathan James / Consultant-07 (CLICKABLE -> Page 4) -->
-                        <div onclick="navigateToPage('jonathan-file')" class="bg-scppanel border-2 border-scpred p-5 rounded-lg cursor-pointer hover:bg-red-950/20 transition relative red-glow-border group">
-                            <div class="absolute top-3 right-3 text-scpbrightred group-hover:scale-110 transition"><i class="fa-solid fa-arrow-right"></i></div>
-                            <div class="text-scpbrightred text-xs font-bold mb-1">CLEARANCE: LEVEL 3 (SPECIAL)</div>
-                            <h3 class="text-base font-bold text-white mb-1 group-hover:text-red-400 transition">Jonathan James</h3>
-                            <p class="text-xs text-red-300/80 font-mono">Consultant-07 // Anomalous Intelligence</p>
-                        </div>
-
-                        <!-- Personnel 4: Director ██████ (Locked) -->
-                        <div onclick="showRestrictedModal('Director ██████ / Oversight')" class="bg-scppanel border border-scpborder p-5 rounded-lg cursor-not-allowed opacity-60 hover:opacity-80 transition relative">
-                            <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
-                            <div class="text-scpred text-xs font-bold mb-1">CLEARANCE: LEVEL 5</div>
-                            <h3 class="text-base font-bold text-zinc-300 mb-1">Director ██████</h3>
-                            <p class="text-xs text-zinc-500">Oversight Liaison, Intelligence Agency</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ========================================== -->
-                <!-- PAGE 4: JONATHAN JAMES FILE                -->
-                <!-- ========================================== -->
-                <section id="page-jonathan-file" class="max-w-4xl mx-auto space-y-6 hidden">
-                    
-                    <!-- Top Navigation & Return -->
-                    <div class="flex items-center justify-between border-b border-scpred pb-4">
-                        <div class="flex items-center space-x-2 text-xs text-red-400 font-bold uppercase tracking-wider">
-                            <i class="fa-solid fa-file-shield"></i>
-                            <span>Personnel File // J. James</span>
-                        </div>
-                        <button onclick="navigateToPage('personnel')" class="text-xs bg-black border border-scpborder hover:border-scpred px-3 py-1.5 rounded text-zinc-300 hover:text-white transition flex items-center space-x-1">
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <span>Back to Personnel List</span>
-                        </button>
-                    </div>
-
-                    <!-- Dossier Header Box (Fixed Badge Placement & Interactive Redactions) -->
-                    <div class="bg-scppanel border-2 border-scpred rounded-lg p-6 shadow-xl relative red-glow-border space-y-4">
-                        
-                        <!-- Fixed Badge Placement (Cleanly positioned in top-right corner, non-overlapping) -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-scpborder pb-3 gap-2">
-                            <div class="text-xs font-bold text-zinc-400 font-mono">
-                                <i class="fa-solid fa-fingerprint text-scpbrightred mr-1"></i>SUBJECT DOSSIER: <span class="text-white">JJ-8821</span>
-                            </div>
-                            <div class="bg-red-950 border border-scpred px-3 py-1 text-[10px] text-scpbrightred font-bold tracking-widest uppercase flex items-center space-x-2 w-fit">
-                                <i class="fa-solid fa-shield"></i>
-                                <span>CLASSIFIED // LEVEL 4</span>
-                                <span class="text-zinc-400 text-[9px] lowercase font-normal">(Click redacted items to decrypt)</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row gap-6 items-start pt-2">
-                            <!-- Clickable Interactive Photo -->
-                            <div id="dossier-photo" onclick="togglePhoto()" class="w-36 h-48 bg-black border-2 border-scpred flex flex-col items-center justify-center relative shrink-0 overflow-hidden group cursor-pointer transition hover:border-scpbrightred rounded shadow-inner" title="Click to unredact portrait">
-                                <div class="absolute inset-0 bg-red-950/20 scanlines"></div>
-                                <div id="photo-placeholder-content" class="flex flex-col items-center justify-center text-center p-2">
-                                    <i class="fa-solid fa-user-secret text-4xl text-scpred mb-2 group-hover:scale-110 transition"></i>
-                                    <span class="text-[10px] text-zinc-400 tracking-wider font-bold">PHOTO REDACTED</span>
-                                    <span class="text-[8px] text-red-500 mt-1">[CLICK TO DECRYPT]</span>
-                                </div>
-                                <div id="photo-revealed-content" class="hidden flex flex-col items-center justify-center text-center p-2">
-                                    <i class="fa-solid fa-user-tie text-4xl text-red-400 mb-2 animate-pulse"></i>
-                                    <span class="text-[10px] text-white font-bold tracking-wider">J. JAMES</span>
-                                    <span class="text-[8px] text-emerald-400 mt-1">BIOMETRIC VERIFIED</span>
-                                </div>
-                                <div class="absolute bottom-1 text-[8px] text-red-600">REF: ID-8821</div>
-                            </div>
-
-                            <!-- Header Metadata Details (Clickable Redacted fields) -->
-                           <div class="flex-1 w-full space-y-3 font-mono text-xs sm:text-sm">
-                                <div class="border-b border-scpborder pb-2 flex items-center justify-between">
-                                    <span class="text-zinc-500 uppercase">Codename:</span>
-                                    <span id="field-codename" onclick="toggleField('codename')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
-                                        <span>[REDACTED]</span>
-                                        <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
-                                    </span>
-                                </div>
-                                <div class="border-b border-scpborder pb-2 flex items-center justify-between">
-                                    <span class="text-zinc-500 uppercase">Name:</span>
-                                    <span class="text-white font-bold">Jonathan James</span>
-                                </div>
-                                <div class="border-b border-scpborder pb-2 flex items-center justify-between">
-                                    <span class="text-zinc-500 uppercase">Age:</span>
-                                    <span id="field-age" onclick="toggleField('age')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
-                                        <span>[REDACTED]</span>
-                                        <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
-                                    </span>
-                                </div>
-                                <div class="border-b border-scpborder pb-2 flex items-center justify-between">
-                                    <span class="text-zinc-500 uppercase">Height:</span>
-                                    <span id="field-height" onclick="toggleField('height')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
-                                        <span>[REDACTED]</span>
-                                        <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
-                                    </span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-zinc-500 uppercase">Department:</span>
-                                    <span class="text-red-300 font-bold">Intelligence Agency</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SECTION 1: Background -->
-                    <div class="bg-scppanel border border-scpborder rounded-lg p-5 space-y-3">
-                        <div class="flex items-center justify-between border-b border-scpborder pb-2">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-red-400 flex items-center">
-                                <i class="fa-solid fa-book-bookmark mr-2"></i>Background [SECTION]
-                            </h3>
-                            <span class="text-[10px] text-zinc-500">EDITABLE DOCUMENTATION AREA</span>
-                        </div>
-                        <div contenteditable="true" class="bg-black/60 border border-scpborder rounded p-4 text-xs sm:text-sm text-zinc-300 focus:outline-none focus:border-scpbrightred min-h-[100px] leading-relaxed">
-                            Born into a family of entertainers in Sacramento, California, Jonathan James' parents were a traveling circus performer and a stage assistant. He moved around all the time as a child until he grew up surrounded by off-season trailers, fairs, and behind-the-scenes circus tents that made up America’s carnivals.
+            <!-- Sections with Static Documentation (Read-Only) -->
+            <div class="dossier-section">
+                <h3>Background [SECTION]</h3>
+                <div class="doc-area">
+Born into a family of entertainers in Sacramento, California, Jonathan James' parents were a traveling circus performer and a stage assistant. He moved around all the time as a child until he grew up surrounded by off-season trailers, fairs, and behind-the-scenes circus tents that made up America’s carnivals.
 
                             At age four, James was well and truly entrenched in his family’s traveling circus. Instead of being schooled in regular sports and games, his father taught him some basics of sleight of hand, card tricks, and how to stand on stage. At age seven, Jane sat at the back of his father’s tent, observing the customers while he told their fortunes. He soon learned the skill of seeing what adults didn’t see—being able to differentiate between genuine distress and an act, finding the wedding ring tucked away in a pocket, and reading the body language of desperate souls seeking answers. At age ten, he started working on designing his own parlor tricks, knowing that people generally look where they are told and hear what they so badly wish to hear.
 
@@ -521,263 +674,129 @@
                             Feeling dread creeping up on him, James did not dare to enter but instead switched on the lights and discovered that his house was quiet, covered in blood. Lying dead in the living room were his wife, Angela, and his daughter, Charlotte, who had been killed by a strike force of the TCI using unorthodox anomalous weapons. Above their dead bodies was painted the logo of the TCI in blood.
 
                             Unable to cope with his guilty conscience and understanding that the source of his destruction was his inflated ego, James ended his showbiz career, severed all ties with the media, and withdrew from society altogether. Almost four years were spent by James hiding out in a seaside town, completely alone and refusing to do any more mentalism or cold reading, and almost two of them were unfortunately committed to a psychiatric hospital. All his time outside of the hospital was spent searching through police archives, public databases, and occult websites hoping to find any hint regarding the mark on the wall. James didn’t know that the Foundation was closing in on him.
+</div>
+            </div>
 
-                        </div>
-                    </div>
+            <div class="dossier-section">
+                <h3>Foundational Recruitment [SECTION]</h3>
+                <div class="doc-area">
+In trying to locate cold hits relating to TCI attacks in online discussions, James inadvertently ran into a Foundation web crawler looking for GoI terms. As a result, the Intelligence Agency field team was dispatched upon recognizing a civilian that made some terrifyingly precise links between the TCI attacks and any other anomalies. His little apartment was searched, and he was expected to be found guilty of being some kind of secret memetic agent or reality bender. James was detained at a Foundation facility and had to go through several weeks of containment procedures and anomaly tests. James was able to neutralize the Lead Researcher during an interrogation by Foundation Researchers within the first three minutes using an explanation of his marital issues, gambling habits, and body language, clearly demonstrating that he did not have any anomalies at all but rather was exceptionally gifted at reading humans.
+                            Instead of giving James a Class-A amnestic that would erase the priceless behavioral information he had gathered using the TCI, the Regional IA Director realized an exceptional opportunity. James was given two options: to forget about his family's murderers for good using the amnestic, or to sign up as a Level 3 Intelligence Agency consultant in order to track down cults and GoI groups. James signed up to the contract immediately. For the following two years, he went through intensive training on Foundation security protocol, threat assessment, GoI systems and so on, fitting himself perfectly as IA’s most unique behavioral consultant.
+.</div>
+            </div>
 
-                    <!-- SECTION 2: Foundational Recruitment -->
-                    <div class="bg-scppanel border border-scpborder rounded-lg p-5 space-y-3">
-                        <div class="flex items-center justify-between border-b border-scpborder pb-2">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-red-400 flex items-center">
-                                <i class="fa-solid fa-handshake-angle mr-2"></i>Foundational Recruitment [SECTION]
-                            </h3>
-                            <span class="text-[10px] text-zinc-500">EDITABLE DOCUMENTATION AREA</span>
-                        </div>
-                        <div contenteditable="true" class="bg-black/60 border border-scpborder rounded p-4 text-xs sm:text-sm text-zinc-300 focus:outline-none focus:border-scpbrightred min-h-[100px] leading-relaxed">
-                            In trying to locate cold hits relating to TCI attacks in online discussions, James inadvertently ran into a Foundation web crawler looking for GoI terms. As a result, the Intelligence Agency field team was dispatched upon recognizing a civilian that made some terrifyingly precise links between the TCI attacks and any other anomalies. His little apartment was searched, and he was expected to be found guilty of being some kind of secret memetic agent or reality bender. James was detained at a Foundation facility and had to go through several weeks of containment procedures and anomaly tests. James was able to neutralize the Lead Researcher during an interrogation by Foundation Researchers within the first three minutes using an explanation of his marital issues, gambling habits, and body language, clearly demonstrating that he did not have any anomalies at all but rather was exceptionally gifted at reading humans.
-                            Instead of giving James a Class-A amnestic that would erase the priceless behavioral information he had gathered using the TCI, the Regional IA Director realized an exceptional opportunity. James was given two options: to forget about his family's murderers for good using the amnestic, or to sign up as a Level 3 Intelligence Agency consultant in order to track down cults and GoI groups. James signed up to the contract immediately. For the following two years, he went through intensive training on Foundation security protocol, threat assessment, and GoI systems and so on, fitting himself perfectly as IA’s most unique behavioral consultant.
+            <!-- Clickable Section Redirecting to Sub-Page -->
+            <div class="clickable-section-box" onclick="navigateTo('page-sub-report')">
+                <h3>IR-4001 Report</h3>
+                <span>VIEW SUB-PAGE &gt;&gt;</span>
+            </div>
+        </div>
+    </div>
 
-                        </div>
-                    </div>
+    <!-- 6. PAGE 5: IR-4001 REPORT SUB-PAGE -->
+    <div id="page-sub-report" class="screen">
+        <header>
+            <div class="header-left">
+                <h1>INCIDENT REPORT IR-4001</h1>
+                <p>Sub-File: Consultant-07 Action Log</p>
+            </div>
+            <div class="header-right">
+                CLEARANCE: LEVEL 4<br>
+                USER: ADMIN-04
+            </div>
+        </header>
 
-                    <!-- CLICKABLE SUB-PAGE LINK SECTION (IR-4001 REPORT) -->
-                    <div class="bg-gradient-to-r from-red-950/40 via-scppanel to-red-950/40 border-2 border-scpred rounded-lg p-5 flex flex-col sm:flex-row items-center justify-between shadow-lg red-glow-border gap-4">
-                        <div>
-                            <div class="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-1">Sub-Report Access Link</div>
-                            <h4 class="text-base font-bold text-white">IR-4001 Report</h4>
-                            <p class="text-xs text-zinc-400 mt-1">Access detailed incident logs and anomaly containment metrics associated with Consultant-07.</p>
-                        </div>
-                        <button onclick="navigateToPage('ir4001-report')" class="w-full sm:w-auto bg-scpred hover:bg-red-700 text-white px-5 py-2.5 rounded text-xs font-bold tracking-widest uppercase border border-scpbrightred transition shadow flex items-center justify-center space-x-2 shrink-0">
-                            <span>Open Report</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
+        <div class="breadcrumb">
+            HOME / DATABASE / DEPARTMENTS / INTELLIGENCE AGENCY / JONATHAN JAMES / <span>IR-4001 REPORT</span>
+        </div>
 
-                </section>
+        <button class="back-btn" onclick="navigateTo('page-4')">&lt; RETURN TO JONATHAN JAMES FILE</button>
 
-                <!-- ========================================== -->
-                <!-- SUB-PAGE: IR-4001 REPORT                   -->
-                <!-- ========================================== -->
-                <section id="page-ir4001" class="max-w-4xl mx-auto space-y-6 hidden">
-                    
-                    <!-- Return Header Bar -->
-                    <div class="flex items-center justify-between border-b border-scpred pb-4">
-                        <div class="flex items-center space-x-2 text-xs text-red-400 font-bold uppercase tracking-wider">
-                            <i class="fa-solid fa-file-contract"></i>
-                            <span>Sub-Page // IR-4001 Incident Report</span>
-                        </div>
-                        <!-- Return to Jonathan's Original File Button -->
-                        <button onclick="navigateToPage('jonathan-file')" class="bg-scpred hover:bg-red-700 text-white px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border border-scpbrightred transition flex items-center space-x-2 shadow">
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <span>Return to Personnel File</span>
-                        </button>
-                    </div>
+        <div class="file-container">
+            <div class="security-badge">RESTRICTED SUB-REPORT</div>
 
-                    <!-- Report Title Box -->
-                    <div class="bg-scppanel border-2 border-scpred rounded-lg p-6 shadow-xl relative red-glow-border">
-                        <div class="absolute top-4 right-4 bg-red-950 border border-scpred px-3 py-1 text-[10px] text-red-400 font-bold tracking-widest uppercase">
-                            INCIDENT REPORT 4001
-                        </div>
-                        <h2 class="text-xl font-bold text-white mb-2">IR-4001 Comprehensive Analysis & Debrief</h2>
-                        <p class="text-xs text-zinc-400">Author: Consultant-07 (Jonathan James) // Target: Cognitive Information Breach at Site-42</p>
-                    </div>
-
-                    <!-- Documentation Section for the Report -->
-                    <div class="bg-scppanel border border-scpborder rounded-lg p-5 space-y-3">
-                        <div class="flex items-center justify-between border-b border-scpborder pb-2">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-red-400 flex items-center">
-                                <i class="fa-solid fa-feather-pointed mr-2"></i>Report Documentation
-                            </h3>
-                            <span class="text-[10px] text-zinc-500">EDITABLE DOCUMENTATION AREA</span>
-                        </div>
-                        <div contenteditable="true" class="bg-black/60 border border-scpborder rounded p-4 text-xs sm:text-sm text-zinc-300 focus:outline-none focus:border-scpbrightred min-h-[220px] leading-relaxed font-mono">
-                            [LOG START]
-                            
-                            When the event took place, Consultant James was interrogating a captured GoI-004 agent under conditions of intense stress. Halfway through his question, the subject disappeared from sight, leaving behind only empty restraining straps falling onto the metal chair. At the same time, two out of three IA guards armed and present in the observation chamber disappeared as well. While most of the anomalies have an ambient hum or some sort of distortion in space when they manifest, James noted that this one did not. Exiting the interrogation room, James found that everything had stopped working. Almost three quarters of the staff working on security, administration, and research at the facility had disappeared in mid-step. Tactical equipment was left vacant on corridors; cups of steaming coffee were left overturned on desks by hands which no longer existed. In response to being questioned by Ethics Committee investigators about how he dealt with the shocking fact that billions of lives had been erased from his memory without leaving any trace, it is reported that James made a cup of tea, gazed out of the observation room window, and said:
+            <div class="dossier-section" style="margin-top: 15px;">
+                <h3>Documentation & Findings [IR-4001]</h3>
+                <div class="doc-area"><strong>Summary:</strong>  When the event took place, Consultant James was interrogating a captured GoI-004 agent under conditions of intense stress. Halfway through his question, the subject disappeared from sight, leaving behind only empty restraining straps falling onto the metal chair. At the same time, two out of three IA guards armed and present in the observation chamber disappeared as well. While most of the anomalies have an ambient hum or some sort of distortion in space when they manifest, James noted that this one did not. Exiting the interrogation room, James found that everything had stopped working. Almost three quarters of the staff working on security, administration, and research at the facility had disappeared in mid-step. Tactical equipment was left vacant on corridors; cups of steaming coffee were left overturned on desks by hands which no longer existed. In response to being questioned by Ethics Committee investigators about how he dealt with the shocking fact that billions of lives had been erased from his memory without leaving any trace, it is reported that James made a cup of tea, gazed out of the observation room window, and said:
                             
                             "The awful thing is not seeing people fade away into nothingness. The awful thing is realizing that three minutes ago, I could have had a brother, a role model, or a best friend... and now I don’t even have the memory of someone worth missing. Not only did the universe destroy their lives but took away my right to mourn them."
                             
-                            But when James was asked about his memories of his dead wife and daughter, he clearly stated that he still remembers that very well.
-                            
-                            [LOG END]
-                        </div>
-                    </div>
+                            When James was asked about his memories of his dead wife and daughter, he clearly stated that he still remembers that <strong>very</strong> well.
 
-                    <!-- Bottom Return Action -->
-                    <div class="flex justify-end pt-4">
-                        <button onclick="navigateToPage('jonathan-file')" class="bg-black hover:bg-scpred border border-scpred text-zinc-300 hover:text-white px-6 py-3 rounded text-xs font-bold uppercase tracking-widest transition flex items-center space-x-2">
-                            <i class="fa-solid fa-arrow-left mr-1"></i>
-                            <span>Return to Jonathan James's Original File</span>
-                        </button>
-                    </div>
-
-                </section>
-
-            </main>
+</div>
+            </div>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- RESTRICTED ACCESS MODAL (FOR LOCKED ITEMS) -->
-    <!-- ========================================== -->
-    <div id="restricted-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-scppanel border-2 border-scpred rounded-lg p-6 max-w-md w-full shadow-2xl red-glow-border text-center space-y-4">
-            <div class="w-12 h-12 bg-red-950 border border-scpred rounded-full flex items-center justify-center mx-auto text-scpbrightred text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div>
-                <h3 class="text-base font-bold text-white tracking-widest uppercase">ACCESS DENIED</h3>
-                <p id="restricted-item-name" class="text-xs text-red-400 mt-1 font-mono">[RESTRICTED RESOURCE]</p>
-            </div>
-            <p class="text-xs text-zinc-400">
-                Your current security clearance (Level 4) is insufficient to access this sector. Clearance Level 5 or O5-Council authorization is required.
-            </p>
-            <button onclick="closeRestrictedModal()" class="w-full bg-scpred hover:bg-red-700 text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest border border-scpbrightred transition">
-                Acknowledge & Return
-            </button>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT LOGIC & ANIMATIONS              -->
-    <!-- ========================================== -->
     <script>
+        // Terminal intro animation text sequence
+        const terminalLines = [
+            "CONNECTING TO SECURE FOUNDATION iNet...",
+            "ESTABLISHING SECURE SOCKET LAYER...",
+            "AUTHENTICATING USER CREDENTIALS [ID: ADMIN-04]...",
+            "BIOMETRIC SCAN: VERIFIED.",
+            "SECURITY CLEARANCE LEVEL 4: GRANTED.",
+            "WARNING: ACCESS TO UNAUTHORIZED FILES IS PUNISHABLE BY IMMEDIATE TERMINATION OR CLASS-A AMNESTICIZATION.",
+            "SYSTEM READY."
+        ];
 
-        // State tracking for unredacted fields
-        const fieldStates = {
-            codename: { revealed: false, text: "CONSULTANT-07" },
-            age: { revealed: false, text: "40" },
-            height: { revealed: false, text: "188 cm (6'2\")" }
+        let lineIdx = 0;
+        let charIdx = 0;
+        const terminalEl = document.getElementById('terminal-output');
+        const submitBtn = document.getElementById('auth-submit-btn');
+
+        function typeWriter() {
+            if (lineIdx < terminalLines.length) {
+                if (charIdx < terminalLines[lineIdx].length) {
+                    terminalEl.innerHTML += terminalLines[lineIdx].charAt(charIdx);
+                    charIdx++;
+                    setTimeout(typeWriter, 20);
+                } else {
+                    terminalEl.innerHTML += "<br>";
+                    lineIdx++;
+                    charIdx = 0;
+                    setTimeout(typeWriter, 350);
+                }
+            } else {
+                submitBtn.style.display = "inline-block";
+            }
+        }
+
+        // Start intro typing on load
+        window.onload = () => {
+            typeWriter();
         };
 
-        let photoRevealed = false;
+        // Navigation function between screens
+        function navigateTo(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
 
-        // Toggle Unredaction for Codename, Age, Height
-        function toggleField(fieldName) {
-            const fieldObj = fieldStates[fieldName];
-            const el = document.getElementById(`field-${fieldName}`);
-            
-            fieldObj.revealed = !fieldObj.revealed;
+        function enterDatabase() {
+            navigateTo('page-1');
+        }
 
-            if (fieldObj.revealed) {
-                el.innerHTML = `<span class="text-emerald-400 font-bold">${fieldObj.text}</span> <i class="fa-solid fa-unlock-keyhole text-[10px] text-emerald-500 ml-1"></i>`;
-                el.classList.remove('border-red-950', 'text-red-400');
-                el.classList.add('border-emerald-900', 'bg-emerald-950/20');
-            } else {
-                el.innerHTML = `<span>[REDACTED]</span> <i class="fa-solid fa-unlock text-[10px] text-zinc-500 ml-1"></i>`;
-                el.classList.remove('border-emerald-900', 'bg-emerald-950/20');
-                el.classList.add('border-red-950', 'text-red-400');
+        // Unredaction interactive functions for top profile fields
+        function revealField(field) {
+            const el = document.getElementById('val-' + field);
+            if (field === 'codename') {
+                el.innerText = 'SPECTRE';
+            } else if (field === 'age') {
+                el.innerText = '41';
+            } else if (field === 'height') {
+                el.innerText = "6'2\"";
             }
+            el.classList.add('revealed');
         }
 
-        // Toggle Photo Unredaction
-        function togglePhoto() {
-            photoRevealed = !photoRevealed;
-            const placeholder = document.getElementById('photo-placeholder-content');
-            const revealed = document.getElementById('photo-revealed-content');
-            const container = document.getElementById('dossier-photo');
-
-            if (photoRevealed) {
-                placeholder.classList.add('hidden');
-                revealed.classList.remove('hidden');
-                container.classList.add('border-emerald-700', 'bg-emerald-950/35');
-            } else {
-                placeholder.classList.remove('hidden');
-                revealed.classList.add('hidden');
-                container.classList.remove('border-emerald-700', 'bg-emerald-950/35');
-            }
-        }
-
-        // Terminal Authentication Animation Sequence
-        function startAuthSequence() {
-            const btn = document.getElementById('auth-btn');
-            const form = document.getElementById('login-form');
-            const progressContainer = document.getElementById('auth-progress-container');
-            const progressBar = document.getElementById('auth-progress-bar');
-            const statusText = document.getElementById('auth-status-text');
-            const terminalOutput = document.getElementById('terminal-output');
-
-            btn.disabled = true;
-            form.classList.add('opacity-50', 'pointer-events-none');
-            progressContainer.classList.remove('hidden');
-
-            setTimeout(() => {
-                terminalOutput.innerHTML += `<div>[AUTH] Validating Agent ID: AG-8821-JJ... OK</div>`;
-                terminalOutput.scrollTop = terminalOutput.scrollHeight;
-                progressBar.style.width = '40%';
-            }, 600);
-
-            setTimeout(() => {
-                terminalOutput.innerHTML += `<div>[CRYPT] Decrypting Level 4 clearance tokens... SUCCESS</div>`;
-                terminalOutput.scrollTop = terminalOutput.scrollHeight;
-                progressBar.style.width = '75%';
-                statusText.innerText = "Establishing Secure iNet Session...";
-            }, 1400);
-
-            setTimeout(() => {
-                terminalOutput.innerHTML += `<div>[ACCESS] ACCESS GRANTED. Welcome, Consultant-07.</div>`;
-                terminalOutput.scrollTop = terminalOutput.scrollHeight;
-                progressBar.style.width = '100%';
-                statusText.innerText = "ACCESS GRANTED // REDIRECTING...";
-            }, 2200);
-
-            // Transition to Main Application (Page 1 - Database Index)
-            setTimeout(() => {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                navigateToPage('database');
-            }, 2800);
-        }
-
-        // Page Navigation Controller
-        function navigateToPage(pageId) {
-            // Hide all pages
-            document.getElementById('page-database').classList.add('hidden');
-            document.getElementById('page-departments').classList.add('hidden');
-            document.getElementById('page-personnel').classList.add('hidden');
-            document.getElementById('page-jonathan-file').classList.add('hidden');
-            document.getElementById('page-ir4001').classList.add('hidden');
-
-            // Show target page
-            if (pageId === 'database') {
-                document.getElementById('page-database').classList.remove('hidden');
-            } else if (pageId === 'departments') {
-                document.getElementById('page-departments').classList.remove('hidden');
-            } else if (pageId === 'personnel') {
-                document.getElementById('page-personnel').classList.remove('hidden');
-            } else if (pageId === 'jonathan-file') {
-                document.getElementById('page-jonathan-file').classList.remove('hidden');
-            } else if (pageId === 'ir4001-report') {
-                document.getElementById('page-ir4001').classList.remove('hidden');
-            }
-
-            // Scroll main window to top
-            const mainContainer = document.querySelector('main');
-            if (mainContainer) mainContainer.scrollTop = 0;
-        }
-
-        // Restricted Modal Handler
-        function showRestrictedModal(itemName) {
-            document.getElementById('restricted-item-name').innerText = itemName;
-            document.getElementById('restricted-modal').classList.remove('hidden');
-        }
-
-        function closeRestrictedModal() {
-            document.getElementById('restricted-modal').classList.add('hidden');
-        }
-
-        // Lock Terminal and return to Login Screen
-        function lockTerminal() {
-            document.getElementById('main-app').classList.add('hidden');
-            const authScreen = document.getElementById('auth-screen');
-            authScreen.classList.remove('hidden');
-            
-            // Reset form
-            document.getElementById('auth-btn').disabled = false;
-            document.getElementById('login-form').classList.remove('opacity-50', 'pointer-events-none');
-            document.getElementById('auth-progress-container').classList.add('hidden');
-            document.getElementById('auth-progress-bar').style.width = '0%';
+        function revealPhoto() {
+            const photoBox = document.getElementById('photo-box');
+            photoBox.classList.add('revealed');
         }
     </script>
 </body>
 </html>
+

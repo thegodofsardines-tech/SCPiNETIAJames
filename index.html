@@ -104,7 +104,7 @@
             <!-- Terminal Output Box -->
             <div id="terminal-output" class="bg-black border border-scpborder p-4 h-48 rounded mb-4 overflow-y-auto text-xs sm:text-sm text-red-500 font-mono space-y-1">
                 <div>[SYSTEM] Initializing SCP Foundation iNet Gateway v5.1.0...</div>
-                <div>[SYSTEM] Connecting to Site-19 Secure Relay... ESTABLISHED.</div>
+                <div>[SYSTEM] Connecting to Site-45 Secure Relay... ESTABLISHED.</div>
                 <div>[SECURE] Encrypted handshake verified. Awaiting credentials...</div>
             </div>
 
@@ -127,7 +127,7 @@
             <!-- Progress Bar Container (Hidden initially) -->
             <div id="auth-progress-container" class="hidden space-y-3 py-6">
                 <div class="text-xs uppercase tracking-widest text-red-400 text-center animate-pulse" id="auth-status-text">
-                    Verifying Biometrics & Level 4 Clearance...
+                    Verifying Biometrics & Level 2 Clearance...
                 </div>
                 <div class="w-full bg-black border border-scpred h-4 rounded overflow-hidden p-0.5">
                     <div id="auth-progress-bar" class="bg-scpbrightred h-full w-0 transition-all duration-75"></div>
@@ -154,7 +154,7 @@
                     <h1 class="text-sm sm:text-base font-bold tracking-widest text-white flex items-center">
                         SCP FOUNDATION <span class="text-xs ml-2 px-1.5 py-0.5 bg-red-950 text-red-400 border border-scpred rounded">iNet v5.1</span>
                     </h1>
-                    <p class="text-[10px] text-zinc-400">SECURE DATABASE ACCESS // GLOBAL O5 NETWORK</p>
+                    <p class="text-[10px] text-zinc-400">SECURE DATABASE ACCESS // GLOBAL NETWORK</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4 text-xs">
@@ -359,7 +359,7 @@
                     <div class="flex items-center justify-between border-b border-scpred pb-4">
                         <div>
                             <div class="text-xs text-scpbrightred font-bold tracking-widest uppercase mb-1">
-                                <i class="fa-solid fa-user-secret mr-2"></i>Intelligence Agency // Personnel Directory
+                                <i class="fa-solid fa-user-secret mr-2"></i>Intelligence Agency // Specialiazed Personnel Directory
                             </div>
                             <h2 class="text-xl sm:text-2xl font-bold tracking-wider text-white">SELECT PERSONNEL FILE</h2>
                         </div>
@@ -375,7 +375,7 @@
                             <div class="absolute top-3 right-3 text-zinc-600"><i class="fa-solid fa-lock"></i></div>
                             <div class="text-scpred text-xs font-bold mb-1">CLEARANCE: LEVEL 4</div>
                             <h3 class="text-base font-bold text-zinc-300 mb-1">Dr. ██████</h3>
-                            <p class="text-xs text-zinc-500">Senior Director of Intelligence Operations</p>
+                            <p class="text-xs text-zinc-500">Regional Director of Intelligence Operations</p>
                         </div>
 
                         <!-- Personnel 2: Agent ████ (Locked) -->
@@ -389,7 +389,7 @@
                         <!-- Personnel 3: Jonathan James / Consultant-07 (CLICKABLE -> Page 4) -->
                         <div onclick="navigateToPage('jonathan-file')" class="bg-scppanel border-2 border-scpred p-5 rounded-lg cursor-pointer hover:bg-red-950/20 transition relative red-glow-border group">
                             <div class="absolute top-3 right-3 text-scpbrightred group-hover:scale-110 transition"><i class="fa-solid fa-arrow-right"></i></div>
-                            <div class="text-scpbrightred text-xs font-bold mb-1">CLEARANCE: LEVEL 4 (SPECIAL)</div>
+                            <div class="text-scpbrightred text-xs font-bold mb-1">CLEARANCE: LEVEL 3 (SPECIAL)</div>
                             <h3 class="text-base font-bold text-white mb-1 group-hover:text-red-400 transition">Jonathan James</h3>
                             <p class="text-xs text-red-300/80 font-mono">Consultant-07 // Anomalous Intelligence</p>
                         </div>
@@ -457,8 +457,7 @@
                             <div class="flex-1 w-full space-y-3 font-mono text-xs sm:text-sm">
                                 <div class="border-b border-scpborder pb-2 flex items-center justify-between">
                                     <span class="text-zinc-500 uppercase">Codename:</span>
-                                    <span id="field-codename" onclick="toggleField('codename')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
-                                        <span>[REDACTED]</span>
+                                    <span class="text-red-300 font-bold">Consultant-07</span>
                                         <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
                                     </span>
                                 </div>
@@ -468,15 +467,13 @@
                                 </div>
                                 <div class="border-b border-scpborder pb-2 flex items-center justify-between">
                                     <span class="text-zinc-500 uppercase">Age:</span>
-                                    <span id="field-age" onclick="toggleField('age')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
-                                        <span>[REDACTED]</span>
+                                    <span class="text-red-300 font-bold">40</span>
                                         <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
                                     </span>
                                 </div>
                                 <div class="border-b border-scpborder pb-2 flex items-center justify-between">
                                     <span class="text-zinc-500 uppercase">Height:</span>
-                                    <span id="field-height" onclick="toggleField('height')" class="text-red-400 font-bold bg-black/80 px-3 py-1 rounded border border-red-950 cursor-pointer hover:border-scpbrightred hover:text-white transition select-none flex items-center space-x-2">
-                                        <span>[REDACTED]</span>
+                                    <span class="text-red-300 font-bold">188cm</span>
                                         <i class="fa-solid fa-unlock text-[10px] text-zinc-500"></i>
                                     </span>
                                 </div>

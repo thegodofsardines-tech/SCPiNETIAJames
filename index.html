@@ -749,74 +749,79 @@ Instead of giving James a Class-A amnestic that would erase the priceless behavi
     </div>
 
     <script>
-        // Terminal intro animation text sequence
-        const terminalLines = [
-            "CONNECTING TO SECURE FOUNDATION iNet...",
-            "ESTABLISHING SECURE SOCKET LAYER...",
-            "AUTHENTICATING USER CREDENTIALS [ID: ADMIN-04]...",
-            "BIOMETRIC SCAN: VERIFIED.",
-            "SECURITY CLEARANCE LEVEL 4: GRANTED.",
-            "WARNING: ACCESS TO UNAUTHORIZED FILES IS PUNISHABLE BY IMMEDIATE TERMINATION OR CLASS-A AMNESTICIZATION.",
-            "SYSTEM READY."
-        ];
+    // Terminal intro animation text sequence
+    const terminalLines = [
+        "CONNECTING TO SECURE FOUNDATION iNet...",
+        "ESTABLISHING SECURE SOCKET LAYER...",
+        "AUTHENTICATING USER CREDENTIALS [ID: ADMIN-04]...",
+        "BIOMETRIC SCAN: VERIFIED.",
+        "SECURITY CLEARANCE LEVEL 4: GRANTED.",
+        "WARNING: ACCESS TO UNAUTHORIZED FILES IS PUNISHABLE BY IMMEDIATE TERMINATION OR CLASS-A AMNESTICIZATION.",
+        "SYSTEM READY."
+    ];
 
-        let lineIdx = 0;
-        let charIdx = 0;
-        const terminalEl = document.getElementById('terminal-output');
-        const submitBtn = document.getElementById('auth-submit-btn');
+    let lineIdx = 0;
+    let charIdx = 0;
+    const terminalEl = document.getElementById('terminal-output');
+    const submitBtn = document.getElementById('auth-submit-btn');
 
-        function typeWriter() {
-            if (lineIdx < terminalLines.length) {
-                if (charIdx < terminalLines[lineIdx].length) {
-                    terminalEl.innerHTML += terminalLines[lineIdx].charAt(charIdx);
-                    charIdx++;
-                    setTimeout(typeWriter, 20);
-                } else {
-                    terminalEl.innerHTML += "<br>";
-                    lineIdx++;
-                    charIdx = 0;
-                    setTimeout(typeWriter, 350);
-                }
+    function typeWriter() {
+        if (!terminalEl) return;
+        if (lineIdx < terminalLines.length) {
+            if (charIdx < terminalLines[lineIdx].length) {
+                terminalEl.innerHTML += terminalLines[lineIdx].charAt(charIdx);
+                charIdx++;
+                setTimeout(typeWriter, 20);
             } else {
-                submitBtn.style.display = "inline-block";
+                terminalEl.innerHTML += "<br>";
+                lineIdx++;
+                charIdx = 0;
+                setTimeout(typeWriter, 350);
             }
+        } else {
+            if (submitBtn) submitBtn.style.display = "inline-block";
         }
+    }
 
-        // Start intro typing on load
-        window.onload = () => {
-            typeWriter();
-        };
+    // Start intro typing immediately when the script parses (no onload dependency required)
+    document.addEventListener("DOMContentLoaded", () => {
+        typeWriter();
+    });
 
-        // Navigation function between screens
-        function navigateTo(screenId) {
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+    // Navigation function between screens
+    function navigateTo(screenId) {
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(screenId);
+        if (target) {
+            target.classList.add('active');
             window.scrollTo(0, 0);
         }
+    }
 
-        function enterDatabase() {
-            navigateTo('page-1');
-        }
+    function enterDatabase() {
+        navigateTo('page-1');
+    }
 
-        // Unredaction interactive functions for top profile fields
-        function revealField(field) {
-            const el = document.getElementById('val-' + field);
-            if (field === 'codename') {
-                el.innerText = 'CONSULTANT-07';
-            } else if (field === 'age') {
-                el.innerText = '40';
-            } else if (field === 'height') {
-                el.innerText = "188CM"";
-            }
-            el.classList.add('revealed');
+    // Unredaction interactive functions for top profile fields
+    function revealField(field) {
+        const el = document.getElementById('val-' + field);
+        if (!el) return;
+        if (field === 'codename') {
+            el.innerText = 'CONSULTANT-07';
+        } else if (field === 'age') {
+            el.innerText = '40';
+        } else if (field === 'height') {
+            el.innerText = "188CM"";
         }
+        el.classList.add('revealed');
+    }
 
-        function revealPhoto() {
-            const photoBox = document.getElementById('photo-box');
-            photoBox.classList.add('revealed');
-        }
-    </script>
+    function revealPhoto() {
+        const photoBox = document.getElementById('photo-box');
+        if (photoBox) photoBox.classList.add('revealed');
+    }
+</script>
 </body>
 </html>
 

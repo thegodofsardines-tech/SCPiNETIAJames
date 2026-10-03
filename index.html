@@ -147,7 +147,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- MAIN APPLICATION CONTAINER (PAGES 1 - 5) -->
+    <!-- MAIN APPLICATION CONTAINER -->
     <!-- ========================================== -->
     <div id="main-app" class="flex-1 flex flex-col hidden opacity-0 transition-opacity duration-1000">
         
@@ -199,7 +199,6 @@
                                 <span class="flex items-center space-x-2"><i class="fa-solid fa-users w-5 text-center"></i><span>Personnel</span></span>
                                 <i class="fa-solid fa-lock text-[10px] text-red-900"></i>
                             </button>
-                            <!-- Active clickable one -->
                             <button onclick="navigateTo('page-departments')" data-nav="page-departments" class="nav-btn active-nav w-full flex items-center justify-between px-3 py-2.5 text-xs bg-scpred/20 border-l-2 border-scpred text-white rounded-r font-bold transition text-left cursor-pointer">
                                 <span class="flex items-center space-x-2"><i class="fa-solid fa-sitemap w-5 text-center text-red-500"></i><span>Departments</span></span>
                                 <i class="fa-solid fa-chevron-right text-[10px] text-red-500"></i>
@@ -225,10 +224,8 @@
             <!-- Dynamic Content Viewport -->
             <main class="flex-1 p-6 md:p-10 overflow-y-auto max-h-[calc(100vh-45px)]">
                 
-                <!-- ========================== -->
-                <!-- PAGE 1: SCP DATABASE MAIN  -->
-                <!-- ========================== -->
-                <section id="page-scp-database" class="page-content space-y-6">
+                <!-- PAGE 1: SCP DATABASE MAIN -->
+                <section id="page-scp-database" class="page-content hidden space-y-6">
                     <div class="border-b border-scpborder pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         <div>
                             <div class="text-xs text-red-500 font-bold uppercase tracking-widest">// ROOT DIRECTORY</div>
@@ -285,20 +282,10 @@
                             <div class="mt-4 text-[10px] text-red-900 font-bold flex items-center space-x-1"><i class="fa-solid fa-lock"></i><span>RESTRICTED ACCESS</span></div>
                         </div>
                     </div>
-
-                    <div class="bg-scppanel border border-scpborder p-4 rounded text-xs flex items-center justify-between">
-                        <div class="flex items-center space-x-3 text-gray-400">
-                            <i class="fa-solid fa-circle-info text-red-600"></i>
-                            <span>Navigation restrictions are enforced per O5 Council Directive 2026-B. Select <strong class="text-white">Departments</strong> to proceed.</span>
-                        </div>
-                        <button onclick="navigateTo('page-departments')" class="px-4 py-2 bg-scpred hover:bg-red-700 text-white font-bold rounded transition">PROCEED TO DEPARTMENTS</button>
-                    </div>
                 </section>
 
-                <!-- ========================== -->
-                <!-- PAGE 2: DEPARTMENT FILES   -->
-                <!-- ========================== -->
-                <section id="page-departments" class="page-content hidden space-y-6">
+                <!-- PAGE 2: DEPARTMENT FILES -->
+                <section id="page-departments" class="page-content space-y-6">
                     <div class="border-b border-scpborder pb-4 flex items-center justify-between">
                         <div>
                             <div class="text-xs text-red-500 font-bold uppercase tracking-widest">// DIRECTORY // DEPARTMENTS</div>
@@ -310,8 +297,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        
-                        <!-- Active Clickable Department -->
                         <div onclick="navigateTo('page-personnel-files')" class="bg-scppanel border-2 border-scpred p-5 rounded cursor-pointer hover:bg-red-950/20 transition shadow-[0_0_15px_rgba(139,0,0,0.3)] group">
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="font-bold text-white group-hover:text-red-400 transition-colors">Intelligence Agency</h3>
@@ -356,49 +341,22 @@
                             <p class="text-xs text-gray-500">Handling physical and psychological trauma, biological hazards, trauma surgery, and anomalous pathogen quarantine.</p>
                         </div>
 
-                        <div onclick="showLockedMessage('Record Keeping and Information Security Administration')" class="bg-scppanel border border-scpborder p-5 rounded opacity-50 cursor-not-allowed">
+                        <div onclick="showLockedMessage('RAISA')" class="bg-scppanel border border-scpborder p-5 rounded opacity-50 cursor-not-allowed">
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="font-bold text-white">RAISA (Record Keeping & InfoSec)</h3>
                                 <span class="text-[10px] bg-red-950 text-red-400 px-2 py-0.5 rounded border border-red-900">LOCKED</span>
                             </div>
                             <p class="text-xs text-gray-500">Managing database archives, information censorship, data sanitization, and memetic counter-measures.</p>
                         </div>
-
-                        <div onclick="showLockedMessage('Security & Containment Division')" class="bg-scppanel border border-scpborder p-5 rounded opacity-50 cursor-not-allowed">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-white">Security & Containment</h3>
-                                <span class="text-[10px] bg-red-950 text-red-400 px-2 py-0.5 rounded border border-red-900">LOCKED</span>
-                            </div>
-                            <p class="text-xs text-gray-500">Physical breach response, Mobile Task Force coordination, and secure containment architecture.</p>
-                        </div>
-
-                        <div onclick="showLockedMessage('Scientific Department')" class="bg-scppanel border border-scpborder p-5 rounded opacity-50 cursor-not-allowed">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-white">Scientific Department</h3>
-                                <span class="text-[10px] bg-red-950 text-red-400 px-2 py-0.5 rounded border border-red-900">LOCKED</span>
-                            </div>
-                            <p class="text-xs text-gray-500">Research, experimentation, and anomalous properties analysis under Senior Researcher supervision.</p>
-                        </div>
-
-                        <div onclick="showLockedMessage('Ethics Committee')" class="bg-scppanel border border-scpborder p-5 rounded opacity-50 cursor-not-allowed">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-white">Ethics Committee</h3>
-                                <span class="text-[10px] bg-red-950 text-red-400 px-2 py-0.5 rounded border border-red-900">LOCKED</span>
-                            </div>
-                            <p class="text-xs text-gray-500">Ensuring Foundation procedures remain necessary, ethical, and aligned with core survival directives.</p>
-                        </div>
-
                     </div>
                 </section>
 
-                <!-- ========================== -->
-                <!-- PAGE 3: PERSONNEL FILES    -->
-                <!-- ========================== -->
+                <!-- PAGE 3: PERSONNEL FILES -->
                 <section id="page-personnel-files" class="page-content hidden space-y-6">
                     <div class="border-b border-scpborder pb-4 flex items-center justify-between">
                         <div>
                             <div class="text-xs text-red-500 font-bold uppercase tracking-widest">// DEPARTMENTS // INTELLIGENCE AGENCY</div>
-                            <h1 class="text-2xl md:text-3xl font-bold tracking-wide text-white">INTELLIGENCE AGENCY // SPECIALIZED PERSONNEL</h1>
+                            <h1 class="text-2xl md:text-3xl font-bold tracking-wide text-white">INTELLIGENCE AGENCY // PERSONNEL ROSTER</h1>
                         </div>
                         <button onclick="navigateTo('page-departments')" class="text-xs text-gray-400 hover:text-white bg-scppanel px-3 py-1.5 border border-scpborder rounded flex items-center space-x-2">
                             <i class="fa-solid fa-arrow-left"></i><span>BACK TO DEPARTMENTS</span>
@@ -406,7 +364,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        <div onclick="showLockedMessage('Agent Vance / Operative-01')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
+                        <div onclick="showLockedMessage('Agent Vance')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
                             <div class="flex items-center space-x-4">
                                 <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
                                 <div>
@@ -417,29 +375,6 @@
                             <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
                         </div>
 
-                        <div onclick="showLockedMessage('Director Sterling / Head of Intel')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Director Sterling / Head of Intel</h4>
-                                    <p class="text-xs text-gray-500">Directorate // Status: On Assignment</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-
-                        <div onclick="showLockedMessage('Specialist K. Thorne / Cryptanalyst-04')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Specialist K. Thorne / Cryptanalyst-04</h4>
-                                    <p class="text-xs text-gray-500">Data Intercept & Signal Analysis // Status: Active</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-
-                        <!-- Active Clickable Personnel -->
                         <div onclick="navigateTo('page-jonathan-file')" class="bg-scppanel border-2 border-scpred p-4 rounded cursor-pointer hover:bg-red-950/20 transition shadow-[0_0_15px_rgba(139,0,0,0.3)] flex items-center justify-between group">
                             <div class="flex items-center space-x-4">
                                 <div class="w-10 h-10 bg-red-950 border border-red-900 rounded flex items-center justify-center text-red-500"><i class="fa-solid fa-user-secret"></i></div>
@@ -449,322 +384,73 @@
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2 text-xs text-red-500 font-bold">
-                                <span>OPEN FILE</span>
+                                <span>VIEW FILE</span>
                                 <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                             </div>
-                        </div>
-
-                        <div onclick="showLockedMessage('Operative 88-Delta / Surveillance')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Operative 88-Delta / Deep Cover</h4>
-                                    <p class="text-xs text-gray-500">Undercover Surveillance Unit // Status: Deployed (Berlin)</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-
-                          <div onclick="showLockedMessage('Analyst Miller / Threat Assessment')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Morpheus Lyonn Jacobs / Criminal Evaluation</h4>
-                                    <p class="text-xs text-gray-500">Data Cryptographer // Status: Active</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-                        
-                        <div onclick="showLockedMessage('Operative 88-Delta / Surveillance')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Operative 81-Alpha / Deep Cover</h4>
-                                    <p class="text-xs text-gray-500">Undercover Surveillance Unit // Status: Deployed (Berlin)</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-                          <div onclick="showLockedMessage('Analyst Miller / Threat Assessment')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Marc / Special Agent</h4>
-                                    <p class="text-xs text-gray-500">Data Cryptographer // Status: Active</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-                        
-                        <div onclick="showLockedMessage('Analyst Miller / Threat Assessment')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Analyst Miller / Threat Assessment</h4>
-                                    <p class="text-xs text-gray-500">Data Cryptographer // Status: Active</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
-                        </div>
-
-                        <div onclick="showLockedMessage('Agent S. Cross / Interrogator')" class="bg-scppanel border border-scpborder p-4 rounded opacity-50 cursor-not-allowed flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-gray-900 border border-gray-800 rounded flex items-center justify-center text-gray-600"><i class="fa-solid fa-user-lock"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-white text-sm">Agent S. Cross / Interrogator-12</h4>
-                                    <p class="text-xs text-gray-500">Reconnaissance & Debriefing // Status: Active</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-red-900 font-mono">CLEARANCE DENIED</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- ========================== -->
-                <!-- PAGE 4: JONATHAN JAMES FILE-->
-                <!-- ========================== -->
+                <!-- PAGE 4: INDIVIDUAL FILE (JONATHAN JAMES) -->
                 <section id="page-jonathan-file" class="page-content hidden space-y-6">
-                    <div class="border-b border-scpborder pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="border-b border-scpborder pb-4 flex items-center justify-between">
                         <div>
-                            <div class="text-xs text-red-500 font-bold uppercase tracking-widest">// PERSONNEL FILE // INTEL AGENCY</div>
-                            <h1 class="text-2xl md:text-3xl font-bold tracking-wide text-white">SUBJECT: JONATHAN JAMES / CONSULTANT-07</h1>
+                            <div class="text-xs text-red-500 font-bold uppercase tracking-widest">// PERSONNEL FILE // CL-3</div>
+                            <h1 class="text-2xl md:text-3xl font-bold tracking-wide text-white">SUBJECT: CONSULTANT JONATHAN JAMES</h1>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="navigateTo('page-personnel-files')" class="text-xs text-gray-400 hover:text-white bg-scppanel px-3 py-1.5 border border-scpborder rounded flex items-center space-x-2">
-                                <i class="fa-solid fa-arrow-left"></i><span>BACK TO PERSONNEL</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Top Identification Box with Photo & Redacted Core Data -->
-                    <div class="bg-scppanel border border-scpborder p-6 rounded relative grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-                        <div class="absolute top-3 right-3">
-                            <span class="stamp">CLASSIFIED // LEVEL 3</span>
-                        </div>
-
-                        <!-- Redacted Photo Placeholder -->
-                        <div class="w-[150px] h-[180px] bg-black border border-scpborder flex flex-col items-center justify-center relative overflow-hidden shrink-0">
-    <img src="https://kommodo.ai/i/QpmGDnl5KEGVxNSlnu9h" alt="Consultant Jonathan James" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(120%); border: 1px solid var(--border-color);">
-</div> class="absolute inset-0 bg-red-950/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span class="text-[10px] text-red-400 font-bold">RESTRICTED</span>
-                                </div>
-                            </div>
-                            <span class="text-[10px] text-gray-500 mt-2">ID_REF: #883-JJ-07</span>
-                        </div>
-
-                        <!-- Core Non-Section Information -->
-                        <div class="md:col-span-3 space-y-3 font-mono text-sm">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-b border-scpborder pb-3">
-                                <div>
-                                    <span class="text-gray-500 text-xs">Codename:</span>
-                                    <div class="text-white font-bold tracking-wider"><span class="redacted" onclick="toggleRedact(this)" title="Click to reveal">"CONSULTANT-07"</span></div>
-                                </div>
-                                <div>
-                                    <span class="text-gray-500 text-xs">Name:</span>
-                                    <div class="text-white font-bold"><span class="redacted" onclick="toggleRedact(this)" title="Click to reveal">Jonathan James</span></div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div>
-                                    <span class="text-gray-500 text-xs">Age:</span>
-                                    <div class="text-white font-bold"><span class="redacted" onclick="toggleRedact(this)" title="Click to reveal">40</span></div>
-                                </div>
-                                <div>
-                                    <span class="text-gray-500 text-xs">Height:</span>
-                                    <div class="text-white font-bold"><span class="redacted" onclick="toggleRedact(this)" title="Click to reveal">188 cm</span></div>
-                                </div>
-                                <div>
-                                    <span class="text-gray-500 text-xs">Department:</span>
-                                    <div class="text-red-400 font-bold">Intelligence Agency</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Background [SECTION] -->
-                    <div class="bg-scppanel border border-scpborder p-6 rounded space-y-3">
-                        <div class="flex items-center justify-between border-b border-scpborder pb-2">
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-                                <i class="fa-solid fa-file-lines text-red-600"></i>
-                                <span>Background</span>
-                            </h3>
-                            <span class="text-[10px] text-gray-500 font-mono">EDITABLE DOCUMENTATION AREA</span>
-                        </div>
-                        <div class="text-gray-300 text-sm leading-relaxed space-y-2 font-mono bg-black/30 p-4 rounded border border-gray-900">
-                            <p contenteditable="true" class="outline-none focus:bg-red-950/10 p-1 rounded transition">
-                                Born into a family of entertainers in Sacramento, California, Jonathan James' parents were a traveling circus performer and a stage assistant. He moved around all the time as a child until he grew up surrounded by off-season trailers, fairs, and behind-the-scenes circus tents that made up America’s carnivals.
-
-                                At age four, James was well and truly entrenched in his family’s traveling circus. Instead of being schooled in regular sports and games, his father taught him some basics of sleight of hand, card tricks, and how to stand on stage. At age seven, Jane sat at the back of his father’s tent, observing the customers while he told their fortunes. He soon learned the skill of seeing what adults didn’t see—being able to differentiate between genuine distress and an act, finding the wedding ring tucked away in a pocket, and reading the body language of desperate souls seeking answers. At age ten, he started working on designing his own parlor tricks, knowing that people generally look where they are told and hear what they so badly wish to hear.
-
-                                Desiring a short-lived normalcy, Jane's mother made him attend a regular high school in northern California. Of course, James proved to be a very bad student in the traditional sense—he found himself often bored, attending class irregularly, and viewing school as an experiment in psychology. Instead of participating in sports or clubs, James found himself spending his lunch periods doing mind-reading experiments for his classmates, becoming adept at navigating the social strata of high school through the anxieties, secrets, and crushes of his classmates. Through cold reading, he managed to get out of detentions, convinced teachers to change his grades, and prevented fights from breaking out.
-
-                                However, by age seventeen, academics failed to keep him engaged anymore, even though he just went through the motions to complete his high school diploma at age eighteen, just to satisfy the formalities but still managing to achieve above 3.9 GPA. James left his house immediately the day after his graduation and embarked on his journey. His performances started in small-town venues where he performed solo acts that involved mentalism, hypnosis, and sleight of hand. It was during this period that he completely took up the role of being a prodigy, knowing how to captivate an audience, charm people, and make use of their superstitions.
-
-                                By the time James hit his mid-twenties, he was already past the stage of performing only for local theater audiences and private galas. From a simple carnival performer to a sophisticated TV show performer, James transformed himself into a world-renowned psychic and medium capable of “talking to the dead” using his witty tongue, Hollywood looks, and amazing cold-reading skills. This helped him get lucrative TV shows, write books, and earn a lot of money using the pain and curiosity of his rich clients and talk show viewers.
-
-                                At the height of his career, James found himself marrying Angela – an astute lady who could see through all the charm he exuded on the public platform and made him earthbound. Within the next twelve months, they welcomed a baby girl, named Charlotte. For some time, James tried to manage his hectic schedule of appearing on television shows amidst all the luxury in which they lived in Northern California. Though Angela was internally opposed to the deceitful business he was into, James paid no heed, sure of his invincibility.
-
-                                At twenty-seven years old, James had reached the peak of his career as well as his self-confidence. There was not a soul alive who he did not think he could outwit and manipulate. James made frequent appearances on broadcast television as an expert commentator who analyzed high-profile crimes and controversies in a manner of untouchable arrogance. James thought of himself as everyone’s audience without realizing that his celebrity status would attract the attention of a deadly, aberrant cell.
-
-                                James was twenty-eight years old when he hit his absolute pinnacle of fame through a prime-time TV special. In the midst of a live broadcast, a radical anomalous extremist group called the TCI tried to execute their terror attack by hacking into the international media channels and broadcasting the face of SCP-096. This hack did not work owing to an unexpected signal interference problem, and the public remained blissfully unaware of how narrowly they escaped the apocalyptic catastrophe. James, who was ignorant about the anomalous world and only knew that the TCI was some pathetic group trying to gain reputation through terrorism, spent his monologue mercilessly ridiculing them. Even smugly inviting them to "Try harder next time" Days later, James came back home after recording his album at the studio. On his way back home, he saw that the front door of the house was wide open and unlocked. There was a folded paper that had been nailed at eye-level on the front door. James pulled down the paper and unfolded it. It read:
-
-                                    "Dear Jonathan,
-                                 You were so entertaining on television. So clever. So confident in your little parlor tricks.
-                                 You told the world we were a joke. You told your audience we couldn't hurt a soul. But you see, Jonathan... you don't possess psychic vision. You're just a greedy, arrogant little fraud.
-                                 If you really were psychic, you wouldn't have to open the door to see what we've done to your lovely wife and daughter."
-                                
-                                Feeling dread creeping up on him, James did not dare to enter but instead switched on the lights and discovered that his house was quiet, covered in blood. Lying dead in the living room were his wife, Angela, and his daughter, Charlotte, who had been killed by a strike force of the TCI using unorthodox anomalous weapons. Above their dead bodies was painted the logo of the TCI in blood.
-
-                                Unable to cope with his guilty conscience and understanding that the source of his destruction was his inflated ego, James ended his showbiz career, severed all ties with the media, and withdrew from society altogether. Almost four years were spent by James hiding out in a seaside town, completely alone and refusing to do any more mentalism or cold reading, and almost two of them were unfortunately committed to a psychiatric hospital. All his time outside of the hospital was spent searching through police archives, public databases, and occult websites hoping to find any hint regarding the mark on the wall. James didn’t know that the Foundation was closing in on him.
-
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Foundational Recruitment [SECTION] -->
-                    <div class="bg-scppanel border border-scpborder p-6 rounded space-y-3">
-                        <div class="flex items-center justify-between border-b border-scpborder pb-2">
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-                                <i class="fa-solid fa-user-plus text-red-600"></i>
-                                <span>Foundational Recruitment</span>
-                            </h3>
-                            <span class="text-[10px] text-gray-500 font-mono">EDITABLE DOCUMENTATION AREA</span>
-                        </div>
-                        <div class="text-gray-300 text-sm leading-relaxed space-y-2 font-mono bg-black/30 p-4 rounded border border-gray-900">
-                            <p contenteditable="true" class="outline-none focus:bg-red-950/10 p-1 rounded transition">
-                                In trying to locate cold hits relating to TCI attacks in online discussions, James inadvertently ran into a Foundation web crawler looking for GoI terms. As a result, the Intelligence Agency field team was dispatched upon recognizing a civilian that made some terrifyingly precise links between the TCI attacks and any other anomalies. His little apartment was searched, and he was expected to be found guilty of being some kind of secret memetic agent or reality bender. James was detained at a Foundation facility and had to go through several weeks of containment procedures and anomaly tests. James was able to neutralize the Lead Researcher during an interrogation by Foundation Researchers within the first three minutes using an explanation of his marital issues, gambling habits, and body language, clearly demonstrating that he did not have any anomalies at all but rather was exceptionally gifted at reading humans.
-                                Instead of giving James a Class-A amnestic that would erase the priceless behavioral information he had gathered using the TCI, the Regional IA Director realized an exceptional opportunity. James was given two options: to forget about his family's murderers for good using the amnestic, or to sign up as a Level 3 Intelligence Agency consultant in order to track down cults and GoI groups. James signed up to the contract immediately. For the following two years, he went through intensive training on Foundation security protocol, threat assessment, and GoI systems and so on, fitting himself perfectly as IA’s most unique behavioral consultant.
-
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Clickable Section Redirecting to Sub-Page -->
-                    <div class="bg-scppanel border-2 border-scpred p-6 rounded space-y-4 hover:bg-red-950/10 transition cursor-pointer group" onclick="navigateTo('page-ir4001-report')">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-3 group-hover:text-red-400 transition-colors">
-                                <i class="fa-solid fa-folder-open text-red-500"></i>
-                                <span>IR-4001 Report</span>
-                            </h3>
-                            <div class="flex items-center space-x-2 text-xs text-red-500 font-bold bg-red-950/40 px-3 py-1.5 rounded border border-red-900">
-                                <span>OPEN SUB-PAGE</span>
-                                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-400">
-                            Click here to access the dedicated sub-page containing full incident logs, debriefs, and documentation regarding Incident Report 4001 authored by Consultant James.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- ========================== -->
-                <!-- PAGE 5: IR-4001 REPORT     -->
-                <!-- ========================== -->
-                <section id="page-ir4001-report" class="page-content hidden space-y-6">
-                    <div class="border-b border-scpborder pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <div class="text-xs text-red-500 font-bold uppercase tracking-widest">// SUB-PAGE // INCIDENT REPORT 4001</div>
-                            <h1 class="text-2xl md:text-3xl font-bold tracking-wide text-white">IR-4001: DEBRIEF & DOCUMENTATION</h1>
-                        </div>
-                        <button onclick="navigateTo('page-jonathan-file')" class="text-xs text-gray-300 hover:text-white bg-scpred hover:bg-red-700 px-4 py-2 border border-red-600 rounded flex items-center space-x-2 transition shadow-[0_0_10px_rgba(139,0,0,0.5)]">
-                            <i class="fa-solid fa-arrow-left"></i><span>RETURN TO PERSONNEL FILE</span>
+                        <button onclick="navigateTo('page-personnel-files')" class="text-xs text-gray-400 hover:text-white bg-scppanel px-3 py-1.5 border border-scpborder rounded flex items-center space-x-2">
+                            <i class="fa-solid fa-arrow-left"></i><span>BACK TO ROSTER</span>
                         </button>
                     </div>
 
-                    <!-- Report Documentation Area -->
-                    <div class="bg-scppanel border border-scpborder p-6 md:p-8 rounded space-y-6 relative">
-                        <div class="absolute top-4 right-4">
-                            <span class="stamp">OFFICIAL RECORD</span>
-                        </div>
-
-                        <div class="border-b border-scpborder pb-4">
-                            <div class="text-xs text-gray-500">AUTHOR: <span class="text-white font-bold">Jonathan James, Consultant-07</span></div>
-                            <div class="text-xs text-gray-500 mt-1">DATE: <span class="text-white">October 14, 2024</span></div>
-                            <div class="text-xs text-gray-500 mt-1">SUBJECT ANOMALY: <span class="text-red-400">SCP-4001 (Temporal Echo Archive)</span></div>
-                        </div>
-
-                        <div class="space-y-4 font-mono text-sm leading-relaxed text-gray-300">
-                            <h4 class="text-white font-bold uppercase tracking-wider text-xs text-red-500">// 1. INITAL CONFUSION</h4>
-                            <div class="bg-black/40 p-4 rounded border border-gray-900">
-                                <p contenteditable="true" class="outline-none focus:bg-red-950/10 p-1 rounded transition">
-                                    When the event took place, Consultant James was interrogating a captured GoI-004 agent under conditions of intense stress. Halfway through his question, the subject disappeared from sight, leaving behind only empty restraining straps falling onto the metal chair.  At the same time, two out of three IA guards armed and present in the observation chamber disappeared as well. While most of the anomalies have an ambient hum or some sort of distortion in space when they manifest, James noted that this one did not.
-                                </p>
+                    <div class="bg-scppanel border border-scpborder p-6 rounded space-y-6">
+                        <div class="flex flex-col md:flex-row gap-6 items-start border-b border-scpborder pb-6">
+                            <div class="w-32 h-40 bg-black border-2 border-scpborder flex items-center justify-center text-gray-700 relative overflow-hidden flex-shrink-0">
+                                <i class="fa-solid fa-user-secret text-5xl"></i>
+                                <div class="absolute bottom-0 inset-x-0 bg-red-950 text-red-400 text-[9px] text-center font-mono py-0.5">ID: #883-J</div>
                             </div>
-
-                            <h4 class="text-white font-bold uppercase tracking-wider text-xs text-red-500 pt-2">// 2. REALIZATION</h4>
-                            <div class="bg-black/40 p-4 rounded border border-gray-900">
-                                <p contenteditable="true" class="outline-none focus:bg-red-950/10 p-1 rounded transition">
-                                    Exiting the interrogation room, James found that everything had stopped working. Almost three quarters of the staff working on security, administration, and research at the facility had disappeared in mid-step. Tactical equipment was left vacant on corridors; cups of steaming coffee were left overturned on desks by hands which no longer existed.
-                                </p>
-                            </div>
-
-                            <h4 class="text-white font-bold uppercase tracking-wider text-xs text-red-500 pt-2">// 3. QUESTIONING</h4>
-                            <div class="bg-black/40 p-4 rounded border border-gray-900">
-                                <p contenteditable="true" class="outline-none focus:bg-red-950/10 p-1 rounded transition">
-                                     In response to being questioned by Ethics Committee investigators about how he dealt with the shocking fact that billions of lives had been erased from his memory without leaving any trace, it is reported that James made a cup of tea, gazed out of the observation room window, and said:
-                                     "The awful thing is not seeing people fade away into nothingness. The awful thing is realizing that three minutes ago, I could have had a brother, a role model, or a best friend... and now I don’t even have the memory of someone worth missing. Not only did the universe destroy their lives but took away my right to mourn them."
-                                     But when James was asked about his memories of his dead wife and daughter, he clearly stated that he still remembers that very well. 
-
-                                </p>
+                            <div class="space-y-2 text-xs font-mono">
+                                <div><span class="text-gray-500">FULL NAME:</span> Jonathan James</div>
+                                <div><span class="text-gray-500">DESIGNATION:</span> Special Intelligence Consultant-07</div>
+                                <div><span class="text-gray-500">SECURITY CLEARANCE:</span> Level 3 (Restricted Intelligence Sub-Net)</div>
+                                <div><span class="text-gray-500">ASSIGNED SITE:</span> Site-45 / Mobile Task Force Liaison</div>
+                                <div><span class="text-gray-500">STATUS:</span> <span class="text-green-500">ACTIVE / GOOD STANDING</span></div>
+                                <div class="pt-2"><span class="stamp">LEVEL 3 AUTHORIZED</span></div>
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-scpborder flex items-center justify-between">
-                            <span class="text-xs text-gray-500">DOCUMENT ID: IR-4001-JJ-FINAL</span>
-                            <button onclick="navigateTo('page-jonathan-file')" class="px-4 py-2 bg-scpborder hover:bg-red-950 text-white text-xs font-bold rounded transition border border-red-900">
-                                <i class="fa-solid fa-arrow-left mr-2"></i>Return to Personnel File
-                            </button>
+                        <div class="space-y-4 text-xs font-mono leading-relaxed">
+                            <h3 class="text-sm font-bold text-red-500 tracking-wider">// BACKGROUND & BRIEF SYNOPSIS</h3>
+                            <p>Consultant Jonathan James acts as an external tactical advisor and intelligence specialist assigned to Site-45. Specialized in tracking cross-border anomalies, covert GOI (Groups of Interest) movements (including Chaos Insurgency and Marshall, Carter & Dark Ltd.), and managing secure informant communications.</p>
+                            <p>Click on any <span class="redacted" onclick="this.classList.toggle('revealed')">classified blacked-out text</span> to reveal sanitized details per RAISA guidelines.</p>
                         </div>
                     </div>
                 </section>
 
+                <!-- PAGE 5: LOCKED NOTIFICATION POPUP / PLACEHOLDER -->
+                <div id="locked-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-scppanel border-2 border-scpred max-w-md w-full p-6 rounded text-center space-y-4 shadow-[0_0_25px_rgba(139,0,0,0.5)]">
+                        <div class="w-12 h-12 bg-red-950 border border-red-800 rounded-full flex items-center justify-center mx-auto text-red-500 text-xl">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white tracking-wider">ACCESS DENIED</h3>
+                        <p id="locked-msg-text" class="text-xs text-gray-400 font-mono">You do not possess the required O5 Council clearance credentials to access this sector.</p>
+                        <button onclick="closeLockedModal()" class="px-6 py-2 bg-scpred hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded transition">ACKNOWLEDGE</button>
+                    </div>
+                </div>
+
             </main>
         </div>
-
-        <!-- Footer Notification / Status -->
-        <footer class="bg-scppanel border-t border-scpborder px-4 py-2 text-[11px] text-gray-500 flex items-center justify-between z-20">
-            <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span>SECURE INTRANET ACTIVE // SITE-45 LOCAL CONNECTION STABLE</span>
-            </div>
-            <div>
-                <span>SECURE-HASH: 0x8F92A // O5-COMMAND MONITORING</span>
-            </div>
-        </footer>
-
     </div>
 
-    <!-- Notification Modal Box (Replacing alert()) -->
-    <div id="modal-box" class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center hidden p-4">
-        <div class="bg-scppanel border-2 border-scpred p-6 rounded max-w-md w-full shadow-2xl space-y-4 crt-flicker">
-            <div class="flex items-center space-x-3 text-red-500">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-                <h3 class="font-bold text-white tracking-wider">SECURITY RESTRICTION</h3>
-            </div>
-            <p id="modal-msg" class="text-sm text-gray-300 font-mono">
-                Access to this section requires higher clearance or is restricted by O5 Directive.
-            </p>
-            <div class="flex justify-end pt-2">
-                <button onclick="closeModal()" class="px-5 py-2 bg-scpred hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded border border-red-600 transition">
-                    ACKNOWLEDGE
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <!-- JavaScript Controllers -->
     <script>
-        // Authentication transition sequence
         function startAuthentication() {
-            const authBtn = document.getElementById('auth-btn');
-            const cursor = document.getElementById('terminal-cursor');
             const authScreen = document.getElementById('auth-screen');
             const mainApp = document.getElementById('main-app');
-
-            authBtn.disabled = true;
-            authBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i><span>VERIFYING...</span>';
-            cursor.innerHTML = '&gt; DECRYPTING O5 CLEARANCE CODES... ACCESS GRANTED.';
+            const cursor = document.getElementById('terminal-cursor');
+            
+            cursor.innerHTML = '&gt; BIOMETRICS ACCEPTED. DECRYPTING LOCAL DATABASE... [SUCCESS]';
             cursor.classList.remove('text-red-600');
             cursor.classList.add('text-green-500');
 
@@ -773,15 +459,13 @@
                 setTimeout(() => {
                     authScreen.style.display = 'none';
                     mainApp.classList.remove('hidden');
-                    // Fade in main app
                     setTimeout(() => {
-                        mainApp.classList.remove('opacity-0');
+                        mainApp.style.opacity = '1';
                     }, 50);
                 }, 700);
-            }, 1200);
+            }, 1000);
         }
 
-        // Navigation Controller
         function navigateTo(pageId) {
             // Hide all pages
             const pages = document.querySelectorAll('.page-content');
@@ -793,46 +477,28 @@
                 target.classList.remove('hidden');
             }
 
-            // Update sidebar highlights
-            const navButtons = document.querySelectorAll('#sidebar-nav .nav-btn');
+            // Update sidebar active buttons if applicable
+            const navButtons = document.querySelectorAll('.nav-btn');
             navButtons.forEach(btn => {
                 btn.classList.remove('bg-scpred/20', 'border-l-2', 'border-scpred', 'text-white', 'font-bold');
                 btn.classList.add('text-gray-400');
-                const chevron = btn.querySelector('.fa-chevron-right, .fa-lock');
-                if(chevron && btn.getAttribute('data-nav') === pageId) {
-                    chevron.className = 'fa-solid fa-chevron-right text-[10px] text-red-500';
+                if(btn.getAttribute('data-nav') === pageId) {
+                    btn.classList.add('bg-scpred/20', 'border-l-2', 'border-scpred', 'text-white', 'font-bold');
+                    btn.classList.remove('text-gray-400');
                 }
             });
-
-            const activeBtn = document.querySelector(`[data-nav="${pageId}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-scpred/20', 'border-l-2', 'border-scpred', 'text-white', 'font-bold');
-                activeBtn.classList.remove('text-gray-400');
-            }
-
-            // Scroll viewport to top
-            const mainViewport = document.querySelector('main');
-            if (mainViewport) {
-                mainViewport.scrollTop = 0;
-            }
         }
 
-        // Locked Notification Modal
         function showLockedMessage(sectionName) {
-            const modal = document.getElementById('modal-box');
-            const msg = document.getElementById('modal-msg');
-            msg.innerHTML = `Access to <strong class="text-white">"${sectionName}"</strong> is restricted under Level-4 Foundation Security Protocols. Only authorized clearance pathways may proceed.`;
+            const modal = document.getElementById('locked-modal');
+            const msg = document.getElementById('locked-msg-text');
+            msg.innerText = `Access to '${sectionName}' is restricted under O5 Directive 2026-B. Clearance level inadequate.`;
             modal.classList.remove('hidden');
         }
 
-        function closeModal() {
-            const modal = document.getElementById('modal-box');
+        function closeLockedModal() {
+            const modal = document.getElementById('locked-modal');
             modal.classList.add('hidden');
-        }
-
-        // Redacted text reveal effect
-        function toggleRedact(el) {
-            el.classList.toggle('revealed');
         }
     </script>
 </body>

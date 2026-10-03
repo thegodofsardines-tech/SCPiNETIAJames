@@ -783,10 +783,8 @@ Instead of giving James a Class-A amnestic that would erase the priceless behavi
         }
     }
 
-    // Start intro typing immediately when the script parses (no onload dependency required)
-    document.addEventListener("DOMContentLoaded", () => {
-        typeWriter();
-    });
+    // DIRECT EXECUTION: Starts typing instantly without waiting for DOM events
+    typeWriter();
 
     // Navigation function between screens
     function navigateTo(screenId) {
@@ -808,11 +806,11 @@ Instead of giving James a Class-A amnestic that would erase the priceless behavi
         const el = document.getElementById('val-' + field);
         if (!el) return;
         if (field === 'codename') {
-            el.innerText = 'CONSULTANT-07';
+            el.innerText = 'SPECTRE';
         } else if (field === 'age') {
-            el.innerText = '40';
+            el.innerText = '41';
         } else if (field === 'height') {
-            el.innerText = "188CM"";
+            el.innerText = "6'2\"";
         }
         el.classList.add('revealed');
     }
